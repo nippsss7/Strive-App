@@ -1,0 +1,14 @@
+ created backend and frontend folder differently.
+ created Server.js (express Server).
+ installed everything (tailwind, mongodb, bcrypt, react etc).
+ created Database models.
+ setup .env.
+ created utils folder and created db.js file to connect db. 
+ created controlers file for user control.
+ created middlewares file to authenticate tokens.
+ created dataUri in utils to convert image in URL.
+ created cloudinary in utils and setup cloudinary.
+ created multer.js file in middleware to upload profile picture.
+ created user controls and post controls in controllers folder.
+ created routes in routes folder for APIs.
+ used 'thunder client' to test all the APIs.
