@@ -7,10 +7,14 @@ import { FileUp, Loader2 } from 'lucide-react';
 import uploadPic from '../assets/upload.svg';
 import { readFileAsDataURL } from '@/lib/utils';
 import { toast } from 'sonner';
+import { useDispatch, useSelector } from 'react-redux';
+import { setPosts } from '@/redux/postSlice';
 
 const NewPostDialog = ({ open, setOpen }) => {
 
     const imageRef = useRef();
+    const dispatch = useDispatch();
+    const {posts} = useSelector(store => store.post)
 
     const [isLoading, setIsLoading] = useState(false)
     const [imagePreview, setImagePreview] = useState()
@@ -34,9 +38,6 @@ const NewPostDialog = ({ open, setOpen }) => {
         formData.append('caption', caption);
         formData.append('image', file);
         try {
-            console.log("Creating post...");
-            console.log(file);
-            console.log(caption)
             const res = await fetch('/api/v1/post/addpost', {
                 method: 'POST',
                 body: formData,
@@ -47,10 +48,14 @@ const NewPostDialog = ({ open, setOpen }) => {
 
             const data = await res.json()
             console.log(data)
-            console.log(data.success)
             toast(data.message);
 
+            if(data.success){
+                dispatch(setPosts([data.post, ...posts]))
+            }
+
             setOpen(false);
+            setImagePreview(null);
 
         } catch (error) {
             console.error("Unable to create post!");

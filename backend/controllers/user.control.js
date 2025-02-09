@@ -5,6 +5,8 @@ import cloudinary from "../utils/cloudinary.js";
 import mongoose from "mongoose";
 import getDataUri from "../utils/dataUri.js";
 import { Post } from "../models/post.model.js";
+import sharp from 'sharp';
+import getDataUriDP from "../utils/dataUriDP.js";
 
 export const register = async (req, res) => {
     try {
@@ -19,7 +21,7 @@ export const register = async (req, res) => {
         }
 
         let user = await User.findOne({ email: email })
-        console.log(user)
+        // console.log(user)
         if (user) {
             return res.status(401).json({
                 message: "User already exists!",
@@ -72,19 +74,19 @@ export const login = async (req, res) => {
                 success: false
             })
         }
-        
+
         const token = await jwt.sign({ userid: user._id }, process.env.KEY_SECRET, { expiresIn: '1d' });
 
         //populating Posts with user -->
-         const populatedPosts = await Promise.all(
+        const populatedPosts = await Promise.all(
             user.posts.map(async (postId) => {
                 const post = await Post.findById(postId);
-                if(post.author.equals(user._id)){
+                if (post.author.equals(user._id)) {
                     return post;
                 }
                 return null;
             })
-         )
+        )
 
         user = {
             _id: user.id,
@@ -123,7 +125,12 @@ export const logout = async (_, res) => {
     }
 }
 
+export const validate = async (req, res) => {
+    console.log("validate function called")
+}
+
 export const getProfile = async (req, res) => {
+    console.log("get profile is called")
     try {
         const userId = req.params.id;
 
@@ -146,8 +153,19 @@ export const editProfile = async (req, res) => {
         const profilePicture = req.file;
         let cloudResponse;
 
+        // console.log(profilePicture);
+
         if (profilePicture) {
-            const fileUri = getDataUri(profilePicture);
+            const resizedDP = await sharp(profilePicture.buffer)
+                .resize(200, 200)
+                .toBuffer();
+
+            // console.log(resizedDP);
+ 
+            // console.log("Resized Image Buffer:", resizedDP); 
+
+            const fileUri = getDataUriDP(resizedDP, profilePicture.originalname);
+
             cloudResponse = await cloudinary.uploader.upload(fileUri);
         }
 
@@ -156,12 +174,12 @@ export const editProfile = async (req, res) => {
             return res.status(404).json({
                 message: 'user not found',
                 success: false
-            })
+            });
         }
 
         if (bio) user.bio = bio;
         if (gender) user.gender = gender;
-        if (profilePicture) user.profilePicture = cloudResponse.secure_url
+        if (profilePicture) user.profilePicture = cloudResponse.secure_url;
 
         await user.save();
 
@@ -169,13 +187,15 @@ export const editProfile = async (req, res) => {
             message: 'profile updated',
             success: true,
             user
-        })
+        });
 
     } catch (error) {
-        console.log("unable to edit!")
-        console.log(error)
+        console.log("unable to edit!");
+        console.log(error);
+        res.status(500).json({ message: "An error occurred", success: false });
     }
 };
+
 
 export const getSuggestedUsers = async (req, res) => {
     try {
@@ -225,14 +245,14 @@ export const followOrUnfollow = async (req, res) => {
                 User.updateOne({ _id: followKrneWala }, { $pull: { following: jiskoFollowKrunga } }),
                 User.updateOne({ _id: jiskoFollowKrunga }, { $pull: { followers: followKrneWala } })
             ])
-            return res.status(200).json({message: "Unfollowed Succesfully", success: true});
+            return res.status(200).json({ message: "Unfollowed Succesfully", success: true });
         }
         else {
             await Promise.all([
                 User.updateOne({ _id: followKrneWala }, { $push: { following: jiskoFollowKrunga } }),
                 User.updateOne({ _id: jiskoFollowKrunga }, { $push: { followers: followKrneWala } })
             ])
-            return res.status(200).json({message: "Followed Succesfully", success: true});
+            return res.status(200).json({ message: "Followed Succesfully", success: true });
         }
 
     } catch (error) {

@@ -5,21 +5,32 @@ import { House, UserPen, Send, Search, Upload, LogOut } from 'lucide-react'
 import { BellDot } from 'lucide-react'
 import { toast } from 'sonner'
 import NewPostDialog from './NewPostDialog'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { setAuthUser } from '@/redux/authSlice'
+import SuggestedUsers from './SuggestedUsers'
+import AllProfileDialog from './AllProfileDialog'
+import { setPosts, setSelectedPost } from '@/redux/postSlice'
 
 const MainLayout = () => {
   const options = [
-    { icon: <House />, text: 'Home', link: '/' },
+    { icon: <House />, text: 'Home', link: '/home' },
     { icon: <Search />, text: 'For You', link: '/profile' },
     { icon: <BellDot />, text: 'Notifications', link: '/profile' },
     { icon: <Upload />, text: 'New Post', link: '/addpost' },
   ]
 
-  const {user} = useSelector(store => store.auth);
+  const { user } = useSelector(store => store.auth);
+  const dispatch = useDispatch();
 
   const [isOpen, setIsOpen] = useState(false)
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   const navigate = useNavigate()
+
+  if(!user){
+    console.log("there is no user!")
+    navigate('/login');
+  }
 
   const logoutHandler = async (e) => {
     try {
@@ -40,6 +51,9 @@ const MainLayout = () => {
 
       if (data.success) {
         navigate('/login');
+        dispatch(setAuthUser(null));
+        // dispatch(setSelectedPost(null));
+        dispatch(setPosts([]))
       }
 
     } catch (error) {
@@ -50,7 +64,7 @@ const MainLayout = () => {
 
   const sideBarHandler = async (text) => {
     if (text === "Home") {
-      navigate('/');
+      navigate('/home');
     }
     else if (text === "For You") {
       navigate('/profile');
@@ -65,11 +79,16 @@ const MainLayout = () => {
     }
   }
 
+  const goToProfile = async (clickedId) => {
+    console.log(clickedId);
+      navigate(`/profile`, {state: {clickedId}});
+  }     
+
 
   return (
     <div className='flex w-full h-screen overflow-hidden' >
       <div className="sideBar bg-[#F9F9FA] border shadow-md h-full w-1/6">
-        <div className="flex flex-col items-center justify-center w-full h-screen">
+        <div className="flex flex-col items-center justify-around pt-[4rem] pb-[6rem] w-full h-full">
           <div className="text-center pb-12  ">
             <div className='w-full h-full bg-[#ff7d1a] p-[3px] rounded-[10px] '>
               <div className='w-full h-full bg-[#ff7d1a] p-2 px-3 rounded-lg border-[3px] border-white'>
@@ -91,16 +110,17 @@ const MainLayout = () => {
               </a>
             ))}
             <NewPostDialog open={isOpen} setOpen={setIsOpen} />
-          </div> 
-          <div>
-            <div className='flex flex-col justify-center w-full'>
-              <h2 className=' font-bold my-4 mt-10'>Your Favorites</h2>
+          </div>
+          <div className='w-full px-6 mt-10'>
+            <div className='flex flex-col justify-center items-center w-full'>
+              <div className='flex flex-row justify-between items-center w-full'>
+                <h2 className=' font-bold my-4 '>Your Favorites</h2>
+                <p className='text-sm text-gray-500 cursor-pointer' onClick={()=>{setIsProfileOpen(true)}}>all</p>
+              </div>
+                <AllProfileDialog open={isProfileOpen} setOpen={setIsProfileOpen}/>
               <div className='flex flex-col justify-center w-full'>
                 <ul className='flex flex-col justify-center w-full'>
-                  <li className='h-10 place-content-center pl-3 hover:bg-gray-100 rounded-lg'>person 1</li>
-                  <li className='h-10 place-content-center pl-3 hover:bg-gray-100 rounded-lg'>person 2</li>
-                  <li className='h-10 place-content-center pl-3 hover:bg-gray-100 rounded-lg'>person 3</li>
-                  <li className='h-10 place-content-center pl-3 hover:bg-gray-100 rounded-lg'>person 4</li>
+                  <SuggestedUsers />
                 </ul>
               </div>
             </div>
@@ -110,7 +130,7 @@ const MainLayout = () => {
       </div>
 
       <div className="flex flex-col w-5/6 h-full">
-        <div className='w-full navbar h-24 border shadow-md px-6 z-10 bg-[#F9F9FA]'>
+        <div className='w-full navbar min-h-24 border shadow-md px-6 z-10 bg-[#F9F9FA]'>
           <div className="flex items-center w-full h-full">
             <div className='w-full'>
               <h1 className='font-bold text-xl'>{`Hello ${user?.username}!`}</h1>
@@ -119,13 +139,14 @@ const MainLayout = () => {
               <input className='border shadow-sm w-full p-2 rounded-lg' type="text" placeholder="Search" />
               <i className="fa fa-search" />
             </div>
-            <div className='profile w-full flex items-center justify-end'>
-              <img src="https://avatars.githubusercontent.com/u/100789451?s=400&u=e1f5d5f0a8a5c3f1c9b7e9d0c2b8c0e8d3e7f4e6&v=4" alt="Nippun" className='w-[3rem] rounded-full' />
+            <div className='cursor-pointer profile w-full flex items-center justify-end' onClick={() => goToProfile(user._id)}>
+              <img src={user?.profilePicture} alt={user?.username} className='cursor-pointer w-[3rem] rounded-full' />
             </div>
           </div>
         </div>
+
         <div className="flex flex-row w-full h-full">
-          <div className='w-4/6 h-full overflow-scroll overflow-x-hidden p-4 flex justify-center items-center'>
+          <div className="w-4/6 h-full max-h-full overflow-auto overflow-x-hidden flex justify-center items-center">
             <Outlet />
           </div>
           <div className="flex shadow-lg border messages bg-[#F9F9FA] w-2/6 px-6 h-full self-end pt-16 z-0">

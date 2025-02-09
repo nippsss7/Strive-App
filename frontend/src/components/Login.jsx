@@ -10,7 +10,7 @@ import { useDispatch } from 'react-redux'
 import { setAuthUser } from '@/redux/authSlice'
 // import { s } from 'vite/dist/node/types.d-aGj9QkWt'
 
-const Signup = () => {
+const Login = () => {
     const [input, setInput] = useState({
         email: '',
         password: '',
@@ -26,7 +26,6 @@ const Signup = () => {
     const signupHandler = async (e) => {
         setLoading(true)
         e.preventDefault();
-        console.log(input);   
         try {
             const res = await fetch('/api/v1/user/login', {
                 method: 'POST',
@@ -39,14 +38,11 @@ const Signup = () => {
 
             const data = await res.json()
             console.log(data)
-            console.log(data.success)
-            console.log(data.user)
             toast(data.message);
-
-            dispatch(setAuthUser(data.user))
-
+            
             if (data.success) {
                 navigate('/home')
+                dispatch(setAuthUser(data.user))
             }
             
         } catch (error) {
@@ -99,4 +95,4 @@ const Signup = () => {
         </>
     )
 }
-export default Signup
+export default Login

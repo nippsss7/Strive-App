@@ -4,6 +4,7 @@ import { Post } from '../models/post.model.js';
 import { User } from '../models/user.model.js';
 import { populate } from 'dotenv';
 import {Comment} from '../models/comment.model.js';
+import { create } from 'domain';
 
 export const addNewPost = async (req, res) => {
     try {
@@ -50,6 +51,8 @@ export const addNewPost = async (req, res) => {
         }
 
         await post.populate({ path: 'author', select: '-password' });
+        // console.log("picture posted by post control: ", post);
+        // console.log("post added through post controller !")
 
         return res.status(201).json({
             message: "New post added",
@@ -64,19 +67,22 @@ export const addNewPost = async (req, res) => {
 }
 
 export const getAllPosts = async (req, res) => {
+    console.log("called all post")
     try {
         const posts = await Post.find().sort({ createdAt: -1 })
-            .populate({ path: 'author', select: 'username,profilePicture' })
+            .populate({ path: 'author', select: 'username profilePicture' })
             .populate({
                 path: 'comments', sort: { createdAt: -1 },
-                populate: { path: 'author', select: 'username,profilePicture' }
+                populate: { path: 'author', select: 'username profilePicture' }
             })
+            // console.log("Fetched posts:", JSON.stringify(posts, null, 2));
 
         return res.status(200).json({
             message: "Fetched all Posts",
             success: true,
             posts
         })
+        
 
     } catch (error) {
         console.log("unable to fetch all posts!")
@@ -88,11 +94,37 @@ export const getUserPost = async (req, res) => {
     try {
         const authorId = req.id;
         const posts = await Post.find({ author: authorId }).sort({ createdAt: -1 })
-            .populate({ path: 'author', select: 'username,profilePicture' })
+            .populate({ path: 'author', select: 'username profilePicture' })
             .populate({
                 path: 'comments', sort: { createdAt: -1 },
-                populate: { path: 'author', select: 'username,profilePicture' }
+                populate: { path: 'author', select: 'username profilePicture' }
             })
+
+        return res.status(200).json({
+            message: "Fetched user's Posts",
+            success: true,
+            posts
+        })
+
+    } catch (error) {
+        console.log("unable to fetch user's posts")
+        console.log(error)
+    }
+}
+
+export const getUserPostByID = async (req,res) => {
+    console.log("getUserPostByID function called");
+    try {
+        const authorId = req.params.id;
+        console.log("author id is: ", authorId);
+        const posts = await Post.find({ author: authorId }).sort({ createdAt: -1 })
+            .populate({ path: 'author', select: 'username profilePicture' })
+            .populate({
+                path: 'comments', sort: { createdAt: -1 },
+                populate: { path: 'author', select: 'username profilePicture' }
+            })
+
+            // console.log("Fetched posts are: ", posts)
 
         return res.status(200).json({
             message: "Fetched user's Posts",
@@ -160,13 +192,17 @@ export const addComment = async (req, res) => {
             text,
             author: commentKarneWala,
             post: postId
-        }).populate({ path: 'author', select: 'username, profilePicture' })
+        });
+
+        // Populating the author field of the newly created comment
+        const populatedComment = await Comment.findById(comment._id)
+            .populate({ path: 'author', select: 'username profilePicture' });
 
         //pushing comment in the post -->
         post.comments.push(comment._id);
         await post.save();
 
-        return res.status(200).json({ message: "comment added", success: true, comment })
+        return res.status(200).json({ message: "comment added", success: true, populatedComment })
 
     } catch (error) {
         console.log("unable to add comment!");
@@ -178,7 +214,7 @@ export const getCommentsByPost = async (req, res) => {
     try {
         const postId = req.params.id;
 
-        const comments = await Comment.find({ post: postId }).populate('path', 'username, profilePicture');
+        const comments = await Comment.find({ post: postId }).populate('path', 'username profilePicture');
 
         if (!comments) return res.status(400).json({ message: "No comments on this post", success: false });
 
