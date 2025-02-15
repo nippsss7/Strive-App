@@ -67,7 +67,7 @@ const NewPostDialog = ({ open, setOpen }) => {
 
     return (
         <Dialog open={open}>
-            <DialogContent onInteractOutside={() => setOpen(false)}>
+            <DialogContent className="w-5/6 rounded-lg" onInteractOutside={() => setOpen(false)}>
                 <DialogTitle className="text-center text-2xl mb-3">Create a New Post</DialogTitle>
                 <form onSubmit={createPostHandler}>
                     <div className="flex flex-col gap-4">
@@ -82,10 +82,10 @@ const NewPostDialog = ({ open, setOpen }) => {
                                 </div>
                             ) : (
                                 <div className='flex flex-col gap-6'>
-                                    <div onClick={() => imageRef.current.click()} className="selectImage border-2 border-gray-400 rounded-lg h-[15rem] cursor-pointer flex justify-center items-center">
+                                    <div onClick={() => imageRef.current.click()} className="selectImage border-2 border-gray-400 rounded-lg h-[13rem] sm:h-[15rem] cursor-pointer flex justify-center items-center">
                                         <img src={uploadPic} className='w-full h-full object-fill p-16' />
                                     </div>
-                                    <button className=' w-1/4 m-auto bg-blue-700 text-white font-bold py-2 px-4 rounded-lg' disabled onClick={createPostHandler} type="submit">Upload</button>
+                                    <button className=' w-auto m-auto bg-blue-700 text-white font-bold py-2 px-4 rounded-lg' disabled onClick={createPostHandler} type="submit">Upload</button>
                                 </div>
                             )
                         }
@@ -98,7 +98,7 @@ const NewPostDialog = ({ open, setOpen }) => {
                                         <Loader2 className='ml-2 h-5 w-5 animate-spin' />
                                     </button>
                                 ) : (
-                                    <button className='bg-blue-500 w-1/4 m-auto hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg' onClick={createPostHandler} type="submit">Upload</button>
+                                    <button className='bg-blue-500 w-auto m-auto hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg' onClick={createPostHandler} type="submit">Upload</button>
                                 )
                             )
                         }

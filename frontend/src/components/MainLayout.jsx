@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { Outlet, useNavigate } from 'react-router-dom'
 import React, { useEffect, useState } from 'react'
-import { House, UserPen, Send, Search, Upload, LogOut } from 'lucide-react'
+import { House, UserPen, Send, Search, Upload, LogOut, Home, User, CirclePlus, Bell } from 'lucide-react'
 import { BellDot } from 'lucide-react'
 import { toast } from 'sonner'
 import NewPostDialog from './NewPostDialog'
@@ -10,6 +10,7 @@ import { setAuthUser } from '@/redux/authSlice'
 import SuggestedUsers from './SuggestedUsers'
 import AllProfileDialog from './AllProfileDialog'
 import { setPosts, setSelectedPost } from '@/redux/postSlice'
+import Messages from './Messages'
 
 const MainLayout = () => {
   const options = [
@@ -27,7 +28,7 @@ const MainLayout = () => {
 
   const navigate = useNavigate()
 
-  if(!user){
+  if (!user) {
     console.log("there is no user!")
     navigate('/login');
   }
@@ -81,13 +82,13 @@ const MainLayout = () => {
 
   const goToProfile = async (clickedId) => {
     console.log(clickedId);
-      navigate(`/profile`, {state: {clickedId}});
-  }     
+    navigate(`/profile`, { state: { clickedId } });
+  }
 
 
   return (
     <div className='flex w-full h-screen overflow-hidden' >
-      <div className="sideBar bg-[#F9F9FA] border shadow-md h-full w-1/6">
+      <div className="sideBar bg-[#F9F9FA] border shadow-md h-full xl:w-1/6 lg:w-1/5 md:w-1/4 hidden sm:block">
         <div className="flex flex-col items-center justify-around pt-[4rem] pb-[6rem] w-full h-full">
           <div className="text-center pb-12  ">
             <div className='w-full h-full bg-[#ff7d1a] p-[3px] rounded-[10px] '>
@@ -100,10 +101,10 @@ const MainLayout = () => {
             </div>
           </div>
 
-          <div className="flex flex-col justify-center border-b pb-6">
+          <div className="flex flex-col justify-center pl-2 border-b pb-6">
             {options.map((option, index) => (
               <a className='w-full hover:text-[#ff7d1a]' onClick={() => sideBarHandler(option.text)} key={(index)}>
-                <div className='flex items-center  w-3/4 m-auto h-12 rounded-lg cursor-pointer'>
+                <div className='flex items-center m-auto px-2 h-12 rounded-lg cursor-pointer'>
                   <p className='mr-3'>{option.icon}</p>
                   <p className="text-md text-gray-70 w-[7rem] font-bold">{option.text}</p>
                 </div>
@@ -111,15 +112,15 @@ const MainLayout = () => {
             ))}
             <NewPostDialog open={isOpen} setOpen={setIsOpen} />
           </div>
-          <div className='w-full px-6 mt-10'>
-            <div className='flex flex-col justify-center items-center w-full'>
+          <div className='w-full lg:px-4 md:px-3 mt-10'>
+            <div className='flex flex-col justify-center items-center w-full max-w-[10rem] m-auto'>
               <div className='flex flex-row justify-between items-center w-full'>
                 <h2 className=' font-bold my-4 '>Your Favorites</h2>
-                <p className='text-sm text-gray-500 cursor-pointer' onClick={()=>{setIsProfileOpen(true)}}>all</p>
+                <p className='text-sm text-gray-500 cursor-pointer' onClick={() => { setIsProfileOpen(true) }}>all</p>
               </div>
-                <AllProfileDialog open={isProfileOpen} setOpen={setIsProfileOpen}/>
+              <AllProfileDialog open={isProfileOpen} setOpen={setIsProfileOpen} />
               <div className='flex flex-col justify-center w-full'>
-                <ul className='flex flex-col justify-center w-full'>
+                <ul className='flex flex-col justify-center'>
                   <SuggestedUsers />
                 </ul>
               </div>
@@ -129,34 +130,59 @@ const MainLayout = () => {
         </div>
       </div>
 
-      <div className="flex flex-col w-5/6 h-full">
-        <div className='w-full navbar min-h-24 border shadow-md px-6 z-10 bg-[#F9F9FA]'>
-          <div className="flex items-center w-full h-full">
+      <div className="flex flex-col w-full sm:w-5/6 h-full">
+        <div className='w-full navbar-desktop hidden sm:block min-h-24 border shadow-md px-6 z-10 bg-[#F9F9FA]'>
+          <div className="flex items-center justify-between w-full h-full">
             <div className='w-full'>
               <h1 className='font-bold text-xl'>{`Hello ${user?.username}!`}</h1>
             </div>
-            <div className="search w-full">
-              <input className='border shadow-sm w-full p-2 rounded-lg' type="text" placeholder="Search" />
-              <i className="fa fa-search" />
+            <div className='flex items-center gap-4 h-full'>
+              <div className="search w-full cursor-pointer">
+                <Search size={28} strokeWidth={3.25} />
+              </div>
+              <div className='cursor-pointer profile w-full flex items-center justify-end' onClick={() => goToProfile(user._id)}>
+                <img src={user?.profilePicture} alt={user?.username} className='cursor-pointer w-[7rem] rounded-full' />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className=" w-full navbar-mobile flex items-center justify-between sm:hidden min-h-24 border shadow-md px-6 z-10 bg-[#F9F9FA] rounded-b-lg">
+          <div className='w-[6.8rem] h-[3.5rem] bg-[#ff7d1a] p-[3px] rounded-[10px] '>
+            <div className='w-full h-full bg-[#ff7d1a] p-2 px-3 rounded-lg border-[3px] border-white'>
+              <h1 className="text-xl font-bold">
+                <span className="text-white font-extrabold">Striv</span>
+                <span className=" text-black">Ve</span>
+              </h1>
+            </div>
+          </div>
+
+          <div className='flex gap-8 items-center'>
+            <div>
+              <p> <Bell strokeWidth={3} /> </p>
             </div>
             <div className='cursor-pointer profile w-full flex items-center justify-end' onClick={() => goToProfile(user._id)}>
               <img src={user?.profilePicture} alt={user?.username} className='cursor-pointer w-[3rem] rounded-full' />
             </div>
           </div>
+
         </div>
 
         <div className="flex flex-row w-full h-full">
-          <div className="w-4/6 h-full max-h-full overflow-auto overflow-x-hidden flex justify-center items-center">
+          <div className="w-full h-full max-h-full overflow-auto overflow-x-hidden flex justify-center items-center">
             <Outlet />
           </div>
-          <div className="flex shadow-lg border messages bg-[#F9F9FA] w-2/6 px-6 h-full self-end pt-16 z-0">
-            <div>
-              <h1 className='font-bold text-xl'>Your Messages</h1>
-            </div>
-          </div>
+          <Messages />
         </div>
         <div>
 
+        </div>
+        <div className='home-bar fixed bottom-0 h-[4rem] bg-[#F9F9FA] border shadow-md  flex justify-center items-center rounded-t-[2rem] w-screen sm:hidden'>
+          <ul className='flex justify-around w-full px-5'>
+            <li onClick={()=>{navigate('/home');}} > <Home strokeWidth={3}/> </li>
+            <li onClick={()=>{setIsOpen(true);}}> <CirclePlus strokeWidth={3} /> </li>
+            <li onClick={() => goToProfile(user._id)}> <User strokeWidth={3} /> </li>
+          </ul>
         </div>
       </div>
 

@@ -117,8 +117,8 @@ const Post = ({ post, user }) => {
   
 
   return (
-    <div className=" w-full h-full flex justify-start items-center">
-      <div className="w-[40rem] m-auto min-h-full shadow-md p-4 border rounded-2xl bg-[#F9F9FA] flex flex-col">
+    <div className=" w-full max-w-[40rem] h-full flex justify-start items-center shadow-md border rounded-2xl bg-[#F9F9FA]">
+      <div className="w-full m-auto min-h-full p-4 flex flex-col">
         <div className='p-2 pb-3 flex items-center gap-2'>
           <Avatar>
             <AvatarImage src="https://github.com/shadcn.png" />

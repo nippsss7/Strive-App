@@ -14,6 +14,36 @@ const Profile = () => {
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false)
   const [post, setPost] = useState(null)
 
+  const logoutHandler = async (e) => {
+    try {
+      e.preventDefault();
+      const res = await fetch('/api/v1/user/logout', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include', // Include credentials in the request
+      })
+
+      const data = await res.json()
+      console.log(data)
+      console.log(data.success)
+      toast(data.message);
+      console.log(data.status)
+
+      if (data.success) {
+        navigate('/login');
+        dispatch(setAuthUser(null));
+        // dispatch(setSelectedPost(null));
+        dispatch(setPosts([]))
+      }
+
+    } catch (error) {
+      console.log(error)
+      console.log("unable to logout")
+    }
+  }
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -72,33 +102,35 @@ const Profile = () => {
   return (
     <div className='profilePage h-full w-full'>
       {user && posts ? ( // Conditional rendering
-        <div className="flex flex-col py-[5rem]">
-          <div className='info w-5/6 m-auto border-b pb-[3rem]'>
-            <div className="flex gap-[5rem] items-center justify-center">
+        <div className="flex flex-col py-[3rem] sm:py-[5rem] mx-2">
+          <div className='info lg:w-5/6 m-auto border-b pb-[3rem]'>
+            <div className="flex lg:gap-[5rem] md:gap-[3rem] gap-[2rem] items-center justify-center">
               <div>
-                <img src={user.profilePicture} className='w-[12rem] h-[12rem] border rounded-full' alt="profile picture" />
+                <img src={user.profilePicture} className='w-[8rem] h-[8rem] sm:w-[12rem] sm:h-[12rem] border rounded-full' alt="profile picture" />
               </div>
               <div className='flex flex-col gap-4'>
-                <div className='flex gap-4'>
-                  <div className='font-bold text-xl'> {user.username} </div>
-                  <button className='bg-gray-200 hover:bg-gray-300 p-1 px-2 rounded' onClick={() => { editProfile() }}> Edit Profile </button>
-                  <EditProfile open={isEditProfileOpen} setOpen={setIsEditProfileOpen} />
-                  <button className='bg-gray-200 hover:bg-gray-300 p-1 px-2 rounded'> Settings </button>
+                <div className='flex flex-col md:items-center items-start md:flex-row lg:gap-4 md:gap-3'>
+                  <div className='font-bold text-xl sm:w-[100%]'> {user.username} </div>
+                  <div className='flex w-full gap-2 pt-3'>
+                    <button className='bg-gray-200 w-[7rem] h-9 hover:bg-gray-300 p-1 px-2 rounded' onClick={() => { editProfile() }}> Edit Profile </button>
+                    <EditProfile open={isEditProfileOpen} setOpen={setIsEditProfileOpen} />
+                    <button className='bg-gray-200 hover:bg-gray-300 p-1 px-2 rounded' onClick={logoutHandler} > Logout </button>
+                  </div>
                 </div>
                 <div className='flex gap-6'>
                   <div> {user.posts.length} posts</div>
                   <div> {user.followers.length} Followers</div>
                   <div> {user.following.length} following</div>
                 </div>
-                <div> this is your BIO</div>
+                <div> this is your BIO </div>
               </div>
             </div>
           </div>
-          <div className='posts flex flex-wrap w-4/6 m-auto pt-12 gap-4'>
+          <div className='posts flex flex-wrap w-full md:w-5/6 m-auto pt-12 gap-4 px-2'>
             {posts.map(post => (
               <div
                 key={post.id}
-                className='sm:w-[calc(50%-16px)] md:w-[calc(33.333%-16px)] flex items-center shadow-md rounded-md overflow-hidden border cursor-pointer'>
+                className='w-[calc(33.333%-16px)] flex items-center shadow-md rounded-md overflow-hidden border cursor-pointer'>
                 <img
                   src={post.image}
                   onClick={() => { setIsCommentOpen(true); setPost(post) }}

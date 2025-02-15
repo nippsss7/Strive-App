@@ -31,7 +31,7 @@ const SuggestedUsers = () => {
         <div className="suggestedUers w-full">
             <ul className='w-full'>
                 {users.map(user => (
-                    <li onClick={()=>{goToProfile(user._id)}} key={user._id} className='flex items-center hover:bg-gray-200 w-full p-2 px-6 gap-2 rounded-md border-b cursor-pointer'>
+                    <li onClick={()=>{goToProfile(user._id)}} key={user._id} className='flex items-center hover:bg-gray-200 w-full p-2 gap-2 rounded-md border-b cursor-pointer'>
                         <img src={user.profilePicture} className="w-8 h-8 mr-2 rounded-full" alt={`${user.username}'s profile`} />
                         <span>{user.username}</span>
                     </li>
