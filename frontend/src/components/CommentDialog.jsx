@@ -16,7 +16,7 @@ const CommentDialog = ({ open, setOpen, content }) => {
                 <DialogContent className="lg:h-[80%] md:h-[70%] sm:h-[60%] h-[80%] rounded-lg py-[3rem] w-[90%] max-w-[70rem] overflow-hidden flex flex-col justify-center gap-4" onInteractOutside={() => setOpen(false)}>
                     <h1 className="text-center font-bold text-2xl">All Comments</h1>
                     <div className="flex gap-4 sm:gap-0 flex-col items-center sm:flex-row sm:items-stretch h-full py-3">
-                        <div className='w-full sm:w-1/2 h-[50%] sm:h-auto pr-0 sm:pr-12'>
+                        <div className='w-fullq sm:w-1/2 h-[50%] sm:h-auto pr-0 sm:pr-12'>
                             <img className='rounded-lg object-contain h-full min-w-full' src={selectedPost.image} alt="" />
                         </div>
                         {
