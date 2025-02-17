@@ -12,8 +12,8 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        // target: "http://localhost:8000",
-        target: "https://strive-app-backend.onrender.com",
+        target: "http://localhost:8000",
+        // target: "https://strive-app-backend.onrender.com",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '/api'),
       }
