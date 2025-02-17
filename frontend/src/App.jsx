@@ -10,7 +10,7 @@ import Home from './components/Home'
 import MainLayout from './components/MainLayout'
 import { createBrowserRouter, Navigate, RouterProvider, useNavigate } from 'react-router-dom'
 import Profile from './components/Profile'
-import OtherProfile from './components/otherProfile'
+import OtherProfile from './components/OtherProfile'
 import ProtectedRoute from './components/ProtectedRoute'
 import Cookies from 'js-cookie'
 
