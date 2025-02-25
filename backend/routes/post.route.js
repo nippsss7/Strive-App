@@ -8,11 +8,11 @@ const router = express.Router();
 router.route("/addpost").post(isAuthenticated, upload.single('image'), addNewPost);
 router.route("/all").get(isAuthenticated, getAllPosts);
 router.route("/userpost/all").get(isAuthenticated, getUserPost);
-router.route("/userpost/:id").get(isAuthenticated, getUserPostByID)
 router.route("/:id/like").get(isAuthenticated, likePost);
 router.route("/:id/dislike").get(isAuthenticated, dislikePost);
 router.route("/:id/comment").post(isAuthenticated, addComment);
 router.route("/:id/comment/all").post(isAuthenticated, getCommentsByPost);
 router.route("/:id/bookmark").post(isAuthenticated, bookmarkPost);
+router.route("/userpost/:id").get(isAuthenticated, getUserPostByID)
 
 export default router;

@@ -67,7 +67,6 @@ export const addNewPost = async (req, res) => {
 }
 
 export const getAllPosts = async (req, res) => {
-    console.log("called all post")
     try {
         const posts = await Post.find().sort({ createdAt: -1 })
             .populate({ path: 'author', select: 'username profilePicture' })
@@ -113,7 +112,6 @@ export const getUserPost = async (req, res) => {
 }
 
 export const getUserPostByID = async (req,res) => {
-    console.log("getUserPostByID function called");
     try {
         const authorId = req.params.id;
         console.log("author id is: ", authorId);
