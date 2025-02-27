@@ -8,7 +8,7 @@ const useValidate = () => {
 useEffect(() => {
     const fetchAuth = async () => {
         const url = "https://strive-app-backend.onrender.com"
-        const res = await fetch(`${url}/v1/user/validate`, {
+        const res = await fetch(`${url}/api/v1/user/validate`, {
             method: 'GET',
             credentials: 'include', // Send cookies with the request
         });
