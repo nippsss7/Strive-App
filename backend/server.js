@@ -1,22 +1,22 @@
-import express from 'express';
-import cors from 'cors';
-import cookieParser from 'cookie-parser';
-import dotenv from 'dotenv';
-import connectDB from './utils/db.js';
-import userRoute from './routes/user.route.js';
-import postRoute from './routes/post.route.js';
+import React from 'react'
+import express, { urlencoded } from 'express'
+import cors from 'cors'
+import cookieParser from 'cookie-parser'
+import dotenv from 'dotenv'
+import { connect } from 'mongoose'
+import connectDB from './utils/db.js'
+import userRoute from './routes/user.route.js'
+import postRoute from './routes/post.route.js'
 
-dotenv.config();
+dotenv.config({});
 
 const app = express();
 
-// Define allowed origins for CORS
 const allowedOrigins = [
-    "http://localhost:5173",  // Local frontend
-    "https://strive-app-frontend.onrender.com" // Deployed frontend
+    'http://localhost:5173',  // Local development frontend
+    'https://strive-app-frontend.onrender.com'  // Deployed frontend
 ];
 
-// Configure CORS
 const corsOptions = {
     origin: function (origin, callback) {
         if (!origin || allowedOrigins.includes(origin)) {
@@ -25,18 +25,13 @@ const corsOptions = {
             callback(new Error("Not allowed by CORS"));
         }
     },
-    credentials: true, // Allow cookies/auth headers
+    credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"]
+    allowedHeaders: ["Content-Type", "Authorization"],
 };
 
-// Apply CORS middleware
 app.use(cors(corsOptions));
 
-// Handle preflight OPTIONS requests
-app.options("*", cors(corsOptions));
-
-// Apply dynamic CORS headers
 app.use((req, res, next) => {
     const origin = req.headers.origin;
     if (allowedOrigins.includes(origin)) {
@@ -48,26 +43,27 @@ app.use((req, res, next) => {
     next();
 });
 
+app.options("*", cors(corsOptions));
+
+const PORT = process.env.PORT || 3000;
+
+app.get("/", (req, res) => {
+    return res.status(200).json({
+        message: "coming from backend",
+        success: true
+    })
+})
+
 // Middlewares
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
-// Test Route
-app.get("/", (req, res) => {
-    return res.status(200).json({
-        message: "Backend is working!",
-        success: true
-    });
-});
-
-// API Routes
+//calling our APIs -->
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/post", postRoute);
 
-// Start Server
-const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     connectDB();
-    console.log(`Server is running on port ${PORT}`);
-});
+    console.log(`Server listening at port ${PORT}`)
+})
