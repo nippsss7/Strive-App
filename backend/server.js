@@ -11,42 +11,27 @@ import postRoute from './routes/post.route.js'
 dotenv.config({});
 
 const app = express();
-
-const allowedOrigins = [
-    'http://localhost:5173',  // Local development frontend
-    'https://strive-app-frontend.onrender.com'  // Deployed frontend
-];
-
 const corsOptions = {
-    origin: function (origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error("Not allowed by CORS"));
-        }
-    },
+    // origin: 'http://localhost:5173',
+    origin: 'https://strive-app-frontend.onrender.com',
     credentials: true,
     allowedHeaders: '*',
-};
-
+}   
 app.use(cors(corsOptions));
 
 app.use((req, res, next) => {
-    const origin = req.headers.origin;
-    if (allowedOrigins.includes(origin)) {
-        res.header("Access-Control-Allow-Origin", origin);
-    }
+    // res.header('Access-Control-Allow-Origin', 'http://localhost:5173');
+    res.header('Access-Control-Allow-Origin', 'https://strive-app-frontend.onrender.com');
     res.header('Access-Control-Allow-Credentials', 'true');
     res.header('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT');
     res.header('Access-Control-Allow-Headers', 'Content-Type');
     next();
-});
-
-app.options("*", cors(corsOptions));
+  });
+  
 
 const PORT = process.env.PORT || 3000;
 
-app.get("/", (req, res) => {
+app.get("/", (req,res) => {
     return res.status(200).json({
         message: "coming from backend",
         success: true
@@ -56,7 +41,7 @@ app.get("/", (req, res) => {
 // Middlewares
 app.use(express.json());
 app.use(cookieParser());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({extended:true}));
 
 //calling our APIs -->
 app.use("/api/v1/user", userRoute);
