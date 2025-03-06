@@ -12,31 +12,38 @@ dotenv.config({});
 
 const app = express();
 
-const allowedOrigins = [
+const allowedOrigins = new Set([
     "http://localhost:5173",  // Local frontend (development)
     "https://strive-app-frontend.onrender.com"  // Deployed frontend (production)
-];
+]);
 
-const corsOptions = {
-    // origin: 'http://localhost:5173',
-    origin: function (origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error("Not allowed by CORS"));
-        }
-    },
-    credentials: true,
-    allowedHeaders: '*',
-}
-app.use(cors(corsOptions));
+// const corsOptions = {
+//     // origin: 'http://localhost:5173',
+//     origin: function (origin, callback) {
+//         if (!origin || allowedOrigins.includes(origin)) {
+//             callback(null, true);
+//         } else {
+//             callback(new Error("Not allowed by CORS"));
+//         }
+//     },
+//     credentials: true,
+//     allowedHeaders: '*',
+// }
+
+
+// app.use(cors(corsOptions));
 
 app.use((req, res, next) => {
-    // res.header('Access-Control-Allow-Origin', 'http://localhost:5173');
-    res.header('Access-Control-Allow-Origin', 'https://strive-app-frontend.onrender.com');
-    res.header('Access-Control-Allow-Credentials', 'true');
-    res.header('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT');
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    const origin = req.headers.origin;
+    if (allowedOrigins.has(origin)) {
+        res.setHeader("Access-Control-Allow-Origin", origin);
+    }
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,DELETE");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    if (req.method === "OPTIONS") {
+        return res.sendStatus(200);  // ✅ Fix: Respond to preflight requests
+    }
     next();
 });
 
