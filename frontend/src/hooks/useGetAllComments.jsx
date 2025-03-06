@@ -8,7 +8,7 @@ const useGetAllComments = () => {
   useEffect(() => {
     const fetchAllPosts = async() => {
         try {
-            const res = await fetch(`/api/v1/post/${id}/comment/all`, {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/post/${id}/comment/all`, {
                 method: 'POST',
                 credentials: 'include'
             })

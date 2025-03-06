@@ -32,7 +32,7 @@ const Post = ({ post, user }) => {
   const addComment = async () => {
     console.log("post id is: ", post._id)
     try {
-      const res = await fetch(`/api/v1/post/${post._id}/comment`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/post/${post._id}/comment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -68,7 +68,7 @@ const Post = ({ post, user }) => {
   const likeDislikeHandler = async () => {
     try {
       const action = liked ? 'dislike' : 'like';
-      const res = await fetch(`/api/v1/post/${post._id}/${action}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/post/${post._id}/${action}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'

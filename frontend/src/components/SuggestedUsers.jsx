@@ -9,7 +9,7 @@ const SuggestedUsers = () => {
     useEffect(() => {
         const fetchSuggestedUsers = async () => {
             try {
-                const response = await fetch('/api/v1/user/suggested');
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/v1/user/suggested`);
                 const data = await response.json();
                 if (data.success) {
                     setUsers(data.users);

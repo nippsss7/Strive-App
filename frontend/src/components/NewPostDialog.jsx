@@ -38,7 +38,7 @@ const NewPostDialog = ({ open, setOpen }) => {
         formData.append('caption', caption);
         formData.append('image', file);
         try {
-            const res = await fetch('/api/v1/post/addpost', {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/post/addpost`, {
                 method: 'POST',
                 body: formData,
                 credentials: 'include',

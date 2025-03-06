@@ -24,7 +24,7 @@ const Signup = () => {
         e.preventDefault();
         console.log(input);
         try {
-            const res = await fetch('/api/v1/user/register', {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/user/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

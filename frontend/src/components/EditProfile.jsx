@@ -33,7 +33,7 @@ const EditProfile = ({ open, setOpen, content }) => {
         formData.append('profilePicture', currentDP);
       }
 
-      const res = await fetch(`/api/v1/user/profile/edit`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/user/profile/edit`, {
         method: 'POST',
         credentials: 'include',
         body: formData

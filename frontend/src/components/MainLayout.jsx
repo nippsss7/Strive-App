@@ -36,7 +36,7 @@ const MainLayout = () => {
   const logoutHandler = async (e) => {
     try {
       e.preventDefault();
-      const res = await fetch('/api/v1/user/logout', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/user/logout`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'

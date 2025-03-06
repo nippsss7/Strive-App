@@ -17,7 +17,7 @@ const Profile = () => {
   const logoutHandler = async (e) => {
     try {
       e.preventDefault();
-      const res = await fetch('/api/v1/user/logout', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/user/logout`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -47,7 +47,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch(`/api/v1/user/${clickedId}/profile`, {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/user/${clickedId}/profile`, {
           method: 'GET',
           credentials: 'include'
         });
@@ -68,7 +68,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await fetch(`/api/v1/post/userpost/all`, {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/post/userpost/all`, {
           method: "GET",
           credentials: 'include'
           // body: JSON.stringify(input)

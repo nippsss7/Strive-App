@@ -8,7 +8,7 @@ const useGetAllPosts = () => {
     useEffect(() => {
         const fetchAllPost = async () => {
             try {
-                const res = await fetch('/api/v1/post/all', {
+                const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/post/all`, {
                     method: 'GET',
                     credentials: 'include'
                 })

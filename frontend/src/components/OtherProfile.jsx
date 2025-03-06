@@ -18,7 +18,7 @@ const OtherProfile = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch(`/api/v1/user/${clickedId}/profile`, {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/user/${clickedId}/profile`, {
           method: 'GET',
           credentials: 'include'
         });
@@ -40,7 +40,7 @@ const OtherProfile = () => {
     useEffect(() => {
       const fetchPosts = async () => {
         try {
-          const res = await fetch(`/api/v1/post/userpost/${clickedId}`, {
+          const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/post/userpost/${clickedId}`, {
             method: "GET",
             credentials: 'include'
           });
