@@ -27,8 +27,11 @@ const isAuthenticated = async(req,res,next) => {
         next();
 
     } catch (error) {
-        console.log("not able to authenticate !")
-        console.log(error)
+        console.error("JWT authentication failed:", error);
+        return res.status(401).json({
+            message: "Authentication failed",
+            success: false
+    });
     }
 }
 
