@@ -7,7 +7,7 @@ const  useValidate = () => {
 
 useEffect(() => {
     const fetchAuth = async () => {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/user/validate`, {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/user/validate`, {
             method: 'GET',
             credentials: 'include', // Send cookies with the request
         });
