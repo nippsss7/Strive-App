@@ -31,8 +31,7 @@ app.use(cors({
 }));
 
 
-app.options("*", cors());
-
+// app.options("*", cors());
 
 app.use(express.json());
 app.use(cookieParser());
@@ -52,23 +51,30 @@ app.use("/api/v1/post", postRoute);
 
 
 const PORT = process.env.PORT || 3000;
-
-console.log("🔍 Debugging Routes...");
-app._router.stack.forEach((middleware) => {
-    if (middleware.route) { 
-        console.log(`✅ Route: ${middleware.route.path}`);
-    } else if (middleware.name === 'router') {
-        middleware.handle.stack.forEach((handler) => {
-            if (handler.route) {
-                console.log(`✅ Route: ${handler.route.path}`);
-            }
-        });
-    }
-});
-console.log("✅ Finished route debugging.");
-
-
 app.listen(PORT, () => {
     connectDB();
     console.log(`Server listening at port ${PORT}`);
+
+    // // ✅ Ensure Express is fully initialized
+    // setTimeout(() => {
+    //     if (!app._router) {
+    //         console.error("🚨 ERROR: Express router is not initialized.");
+    //         return;
+    //     }
+
+    //     console.log("🔍 Debugging Routes...");
+    //     app._router.stack.forEach((middleware) => {
+    //         if (middleware.route) { 
+    //             console.log(`✅ Route: ${middleware.route.path}`);
+    //         } else if (middleware.name === 'router') {
+    //             middleware.handle.stack.forEach((handler) => {
+    //                 if (handler.route) {
+    //                     console.log(`✅ Route: ${handler.route.path}`);
+    //                 }
+    //             });
+    //         }
+    //     });
+    //     console.log("✅ Finished route debugging.");
+    // }, 500); // ✅ Delay execution to ensure Express initializes
+
 });
