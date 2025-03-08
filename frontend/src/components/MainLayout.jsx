@@ -53,7 +53,7 @@ const MainLayout = () => {
       if (data.success) {
         navigate('/login');
         dispatch(setAuthUser(null));
-        // dispatch(setSelectedPost(null));
+        dispatch(setSelectedPost(null));
         dispatch(setPosts([]))
       }
 

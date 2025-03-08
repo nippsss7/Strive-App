@@ -10,6 +10,10 @@ const CommentDialog = ({ open, setOpen, content }) => {
     const {selectedPost} = useSelector(store => store.post)
     // console.log(selectedPost)
 
+    if(!selectedPost){
+        return ;
+    }
+
     return (
         <div className='h-[90%]'>
             <Dialog open={open}>
