@@ -98,7 +98,7 @@ export const login = async (req, res) => {
             following: user.following,
             posts: populatedPosts
         }
-        return res.cookie('token', token, { httpOnly: true, sameSite: 'strict', maxAge: 1 * 24 * 60 * 60 * 1000 }).json({
+        return res.cookie('token', token, { httpOnly: true, sameSite: 'None', maxAge: 1 * 24 * 60 * 60 * 1000 }).json({
             message: `Welcome ${user.username}`,
             success: true,
             user
