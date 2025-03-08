@@ -13,8 +13,8 @@ const SuggestedUsers = () => {
 
                 const response = await fetch(`${import.meta.env.VITE_API_URL}/v1/user/suggested`, {
                     method: "GET",
+                    credentials: "include",
                     headers: {
-                        "Authorization": `Bearer ${token}`,  // Add token to Authorization header
                         "Content-Type": "application/json"   // Optional, but good practice
                     }
                 });
