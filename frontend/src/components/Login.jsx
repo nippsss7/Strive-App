@@ -42,7 +42,7 @@ const Login = () => {
             
             if (data.success) {
                 navigate('/home');
-                window.location.href = "/home";
+                // window.location.href = "/home";
                 dispatch(setAuthUser(data.user))
             }
             
