@@ -52,6 +52,11 @@ function App() {
       path: '/login',
       element: <Login />,
     },
+    // Handle 404 (Not Found) pages
+  {
+    path: '*',
+    element: <Navigate to="/home" replace />
+  }
   ])
 
   return (
