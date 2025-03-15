@@ -2,7 +2,6 @@ backend/node_modules/
 backend/.env
 frontend/.env
 backend/.DS_Store
-backend/dist/
 backend/build/
 
 # dependencies
