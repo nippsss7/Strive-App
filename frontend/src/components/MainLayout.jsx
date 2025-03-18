@@ -14,7 +14,7 @@ import Messages from './Messages'
 
 const MainLayout = () => {
   const options = [
-    { icon: <House />, text: 'Home', link: '/home' },
+    { icon: <House />, text: 'Home', link: '' },
     { icon: <Search />, text: 'For You', link: '/profile' },
     { icon: <BellDot />, text: 'Notifications', link: '/profile' },
     { icon: <Upload />, text: 'New Post', link: '/addpost' },
@@ -65,7 +65,7 @@ const MainLayout = () => {
 
   const sideBarHandler = async (text) => {
     if (text === "Home") {
-      navigate('/home');
+      navigate('/');
     }
     else if (text === "For You") {
       navigate('/profile');
@@ -179,7 +179,7 @@ const MainLayout = () => {
         </div>
         <div className='home-bar fixed bottom-0 h-[4rem] bg-[#F9F9FA] border shadow-md  flex justify-center items-center rounded-t-[2rem] w-screen sm:hidden'>
           <ul className='flex justify-around w-full px-5'>
-            <li onClick={()=>{navigate('/home');}} > <Home strokeWidth={3}/> </li>
+            <li onClick={()=>{navigate('/');}} > <Home strokeWidth={3}/> </li>
             <li onClick={()=>{setIsOpen(true);}}> <CirclePlus strokeWidth={3} /> </li>
             <li onClick={() => goToProfile(user._id)}> <User strokeWidth={3} /> </li>
           </ul>

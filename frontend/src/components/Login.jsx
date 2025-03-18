@@ -41,7 +41,7 @@ const Login = () => {
             toast(data.message);
             
             if (data.success) {
-                navigate('/home');
+                navigate('/');
                 // window.location.href = "/home";
                 dispatch(setAuthUser(data.user))
             }

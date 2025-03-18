@@ -21,22 +21,22 @@ function App() {
   console.log(token)
 
   const browserRouter = createBrowserRouter([
-    {
-      path: '/',
-      element: <Navigate to="/home" replace />
-    },
+    // {
+    //   path: '/',
+    //   element: <Navigate to="/home" replace />
+    // },
     {
       path: '/',
       element: <MainLayout />,
       children: [
         {
-          path: '/home',
-          
-          element: ( <ProtectedRoute> <Home/> </ProtectedRoute> )
+          path: '/',
+
+          element: (<ProtectedRoute> <Home /> </ProtectedRoute>)
         },
         {
           path: '/profile',
-          element: <Profile/>
+          element: <Profile />
         },
         {
           path: '/profile/:id',
@@ -46,17 +46,16 @@ function App() {
     },
     {
       path: '/signup',
-      element: <Signup /> ,
+      element: <Signup />,
     },
     {
       path: '/login',
       element: <Login />,
     },
-    // Handle 404 (Not Found) pages
-  {
-    path: '*',
-    element: <Navigate to="/home" replace />
-  }
+    {
+      path: '*',
+      element: <Navigate to="/" replace />
+    }
   ])
 
   return (
