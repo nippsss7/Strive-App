@@ -59,7 +59,7 @@ function App() {
 
   return (
     <>
-      <div className='font-kumbh'>
+      <div className='font-kumbh kumbh'>
         <RouterProvider router={browserRouter} />
       </div>
     </>
