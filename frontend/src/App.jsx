@@ -30,18 +30,17 @@ function App() {
       element: <MainLayout />,
       children: [
         {
-          path: '/',
-
-          element: (<ProtectedRoute> <Home /> </ProtectedRoute>)
-        },
-        {
           path: '/profile',
           element: <Profile />
         },
         {
           path: '/profile/:id',
           element: <OtherProfile />
-        }
+        },
+        {
+          path: '/',
+          element: (<ProtectedRoute> <Home /> </ProtectedRoute>)
+        },
       ]
     },
     {
@@ -61,9 +60,7 @@ function App() {
   return (
     <>
       <div className='font-kumbh'>
-
         <RouterProvider router={browserRouter} />
-
       </div>
     </>
   )
