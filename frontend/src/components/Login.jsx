@@ -39,13 +39,13 @@ const Login = () => {
             const data = await res.json()
             console.log(data)
             toast(data.message);
-            
+
             if (data.success) {
-                // navigate('/');
-                window.location.href = "/";
+                navigate('/');
+                // window.location.href = "/";
                 dispatch(setAuthUser(data.user))
             }
-            
+
         } catch (error) {
             console.log(error)
             console.log("unable to Login")
