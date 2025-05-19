@@ -15,7 +15,7 @@ useEffect(() => {
         console.log(data);
         if (!data.success) {
             console.log("not authenticated")
-            navigate('/login');
+            // navigate('/login'); 
         }
     };
     fetchAuth()

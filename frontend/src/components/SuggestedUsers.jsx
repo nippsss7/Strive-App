@@ -4,6 +4,10 @@ import { Outlet, useNavigate } from 'react-router-dom'
 const SuggestedUsers = () => {
     const [users, setUsers] = useState([]);
 
+    if(!users){
+        
+    }
+
     const navigate = useNavigate();
 
     useEffect(() => {

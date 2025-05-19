@@ -7,116 +7,157 @@ import getDataUri from "../utils/dataUri.js";
 import { Post } from "../models/post.model.js";
 import sharp from 'sharp';
 import getDataUriDP from "../utils/dataUriDP.js";
+import { clerkClient } from "@clerk/clerk-sdk-node";
+// import { ClerkExpressRequireAuth } from "@clerk/express";
 
-export const register = async (req, res) => {
-    try {
+// const requireAuth = ClerkExpressRequireAuth();
 
-        const { username, email, password } = req.body;
+// clerk changes -->
+// export const register = async (req, res) => {
+//     try {
 
-        if (!username || !email || !password) {
-            return res.status(401).json({
-                message: "Something is missing, Please Check!",
-                success: false
-            })
-        }
+//         const { username, email, password } = req.body;
 
-        let user = await User.findOne({ email: email })
-        // console.log(user)
-        if (user) {
-            return res.status(401).json({
-                message: "User already exists!",
-                success: false
-            })
-        }
+//         if (!username || !email || !password) {
+//             return res.status(401).json({
+//                 message: "Something is missing, Please Check!",
+//                 success: false
+//             })
+//         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
-        await User.create({
-            username,
-            email,
-            password: hashedPassword
-        })
-        return res.status(201).json({
-            message: "Account created succesfully!",
-            success: true
-        })
+//         let user = await User.findOne({ email: email })
+//         // console.log(user)
+//         if (user) {
+//             return res.status(401).json({
+//                 message: "User already exists!",
+//                 success: false
+//             })
+//         }
+
+//         const hashedPassword = await bcrypt.hash(password, 10);
+//         await User.create({
+//             username,
+//             email,
+//             password: hashedPassword
+//         })
+//         return res.status(201).json({
+//             message: "Account created succesfully!",
+//             success: true
+//         })
 
 
-    } catch (error) {
-        console.log("error: unable to register!")
-        console.log(error)
-    }
-}
+//     } catch (error) {
+//         console.log("error: unable to register!")
+//         console.log(error)
+//     }
+// }
+
+// export const login = async (req, res) => {
+//     try {
+
+//         const { email, password } = req.body;
+
+//         if (!email || !password) {
+//             return res.status(401).json({
+//                 message: "Something is missing, Please Check!",
+//                 success: false
+//             })
+//         }
+
+//         let user = await User.findOne({ email: email })
+//         if (!user) {
+//             return res.status(401).json({
+//                 message: "Invalid email address!",
+//                 success: false
+//             })
+//         }
+
+//         const isPasswordMatch = await bcrypt.compare(password, user.password)
+//         if (!isPasswordMatch) {
+//             return res.status(401).json({
+//                 message: "Invalid Password!",
+//                 success: false
+//             })
+//         }
+
+//         const token = await jwt.sign({ userid: user._id }, process.env.KEY_SECRET, { expiresIn: '1d' });
+
+//         //populating Posts with user -->
+//         const populatedPosts = await Promise.all(
+//             user.posts.map(async (postId) => {
+//                 const post = await Post.findById(postId);
+//                 if (post.author.equals(user._id)) {
+//                     return post;
+//                 }
+//                 return null;
+//             })
+//         )
+
+//         user = {
+//             _id: user.id,
+//             username: user.username,
+//             email: user.email,
+//             profilePicture: user.profilePicture,
+//             bio: user.bio,
+//             followers: user.followers,
+//             following: user.following,
+//             posts: populatedPosts
+//         }
+
+//         return res.cookie("token", token, { 
+//             httpOnly: true,  
+//             sameSite: "None",  
+//             secure: true, // ✅ Ensures cookies work on HTTPS
+//             maxAge: 24 * 60 * 60 * 1000  // ✅ 1 day expiration
+//         }).json({
+//             message: `Welcome ${user.username}`,
+//             success: true,
+//             user
+//         });
+
+
+//     } catch (error) {
+//         console.log("unable to login!");
+//         console.log(error)
+
+//     }
+// }
 
 export const login = async (req, res) => {
     try {
+        const user = req.user;
 
-        const { email, password } = req.body;
-
-        if (!email || !password) {
-            return res.status(401).json({
-                message: "Something is missing, Please Check!",
-                success: false
-            })
-        }
-
-        let user = await User.findOne({ email: email })
-        if (!user) {
-            return res.status(401).json({
-                message: "Invalid email address!",
-                success: false
-            })
-        }
-
-        const isPasswordMatch = await bcrypt.compare(password, user.password)
-        if (!isPasswordMatch) {
-            return res.status(401).json({
-                message: "Invalid Password!",
-                success: false
-            })
-        }
-
-        const token = await jwt.sign({ userid: user._id }, process.env.KEY_SECRET, { expiresIn: '1d' });
-
-        //populating Posts with user -->
-        const populatedPosts = await Promise.all(
-            user.posts.map(async (postId) => {
-                const post = await Post.findById(postId);
-                if (post.author.equals(user._id)) {
-                    return post;
-                }
-                return null;
-            })
-        )
-
-        user = {
-            _id: user.id,
-            username: user.username,
-            email: user.email,
-            profilePicture: user.profilePicture,
-            bio: user.bio,
-            followers: user.followers,
-            following: user.following,
-            posts: populatedPosts
-        }
-
-        return res.cookie("token", token, { 
-            httpOnly: true,  
-            sameSite: "None",  
-            secure: true, // ✅ Ensures cookies work on HTTPS
-            maxAge: 24 * 60 * 60 * 1000  // ✅ 1 day expiration
-        }).json({
-            message: `Welcome ${user.username}`,
-            success: true,
-            user
-        });
-        
+        return res.status(200).json({
+            user,
+            success: true
+        })
 
     } catch (error) {
-        console.log("unable to login!");
+        console.log("unable to store user in redux through clerk")
         console.log(error)
-
     }
+
 }
+
+
+export async function ensureUserProfile() {
+    console.log("called ensureUserProfile")
+    const user = await currentUser(); // gets the Clerk user
+    const userId = user.id;
+
+    let profile = await UserProfile.findOne({ userId });
+
+    if (!profile) {
+        profile = await User.create({
+            userId,
+            username: user.username || user.firstName,
+            avatar: user.imageUrl,
+        });
+    }
+
+    return profile;
+}
+
 
 export const logout = async (_, res) => {
     try {
@@ -155,7 +196,7 @@ export const getProfile = async (req, res) => {
 
 export const editProfile = async (req, res) => {
     try {
-        const userId = req.id;
+        const userId = req.user;
         const { bio, gender } = req.body;
         const profilePicture = req.file;
         let cloudResponse;
@@ -168,7 +209,7 @@ export const editProfile = async (req, res) => {
                 .toBuffer();
 
             // console.log(resizedDP);
- 
+
             // console.log("Resized Image Buffer:", resizedDP); 
 
             const fileUri = getDataUriDP(resizedDP, profilePicture.originalname);

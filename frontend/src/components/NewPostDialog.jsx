@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 import { useDispatch, useSelector } from 'react-redux';
 import { setPosts } from '@/redux/postSlice';
 
-const NewPostDialog = ({ open, setOpen }) => {
+const  NewPostDialog = ({ open, setOpen }) => {
 
     const imageRef = useRef();
     const dispatch = useDispatch();

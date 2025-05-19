@@ -8,7 +8,6 @@ import store from '@/redux/store';
 const CommentDialog = ({ open, setOpen, content }) => {
 
     const {selectedPost} = useSelector(store => store.post)
-    // console.log(selectedPost)
 
     if(!selectedPost){
         return ;
@@ -21,7 +20,7 @@ const CommentDialog = ({ open, setOpen, content }) => {
                     <h1 className="text-center font-bold text-2xl">All Comments</h1>
                     <div className="flex gap-4 sm:gap-0 flex-col items-center sm:flex-row sm:items-stretch h-full py-3">
                         <div className='w-fullq sm:w-1/2 h-[50%] sm:h-auto pr-0 sm:pr-12'>
-                            <img className='rounded-lg object-contain h-full min-w-full' src={selectedPost.image} alt="" />
+                            <img className='rounded-lg object-contain h-full min-w-full' src={selectedPost?.image} alt="" />
                         </div>
                         {
                             content && content.comments.length > 0 ? (
@@ -30,11 +29,11 @@ const CommentDialog = ({ open, setOpen, content }) => {
                                         <div key={index} className="border-b py-2">
                                             <div className="flex items-center gap-2">
                                                 <img
-                                                    src={comment.author.profilePicture}
+                                                    src={comment.authorId?.profilePicture}
                                                     alt="Author"
                                                     className="w-8 h-8 mr-2 rounded-full"
                                                 />
-                                                <span className="font-semibold text-black">{comment.author.username}</span>
+                                                <span className="font-semibold text-black">{comment.authorId?.username}</span>
                                                 <p className="text-sm">{comment.text}</p>
                                             </div>
                                         </div>

@@ -5,25 +5,26 @@ import useValidate from '@/hooks/useValidate';
 import { useSelector } from 'react-redux';
 import store from '@/redux/store';
 import { useNavigate } from 'react-router-dom';
+import { useUser } from '@clerk/clerk-react';
 
 const Home = () => {
     const navigate = useNavigate();
     const { posts } = useSelector(store => store.post)
-    const { user } = useSelector(store => store.auth)
+    const { mongoUser } = useSelector(store => store.auth)
 
-    if(!user){
-        navigate('/login');
-    }
+    // if(!user){
+    //     navigate('/login');
+    // }
 
     useGetAllPosts();
-    useValidate();
+    // useValidate();
     
 
 
     return (
         <div className='w-full flex p-4 pb-8 flex-col justify-start items-center gap-4 overflow-scroll' style={{ height: 'calc(100vh - 100px)' }}>
             {
-                posts.map((post) => <Post post={post} user={user} />)
+                posts.map((post) => <Post post={post} user={mongoUser} />)
             }
         </div>
     )

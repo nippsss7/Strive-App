@@ -3,6 +3,10 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import CommentDialog from './CommentDialog';
 import EditProfile from './EditProfile';
+import { useDispatch } from 'react-redux';
+import { setSelectedPost } from '@/redux/postSlice';
+import { UserButton } from '@clerk/clerk-react';
+import { useClerk } from '@clerk/clerk-react';
 
 const Profile = () => {
   const location = useLocation();
@@ -13,6 +17,9 @@ const Profile = () => {
   const [isCommentOpen, setIsCommentOpen] = useState(false)
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false)
   const [post, setPost] = useState(null)
+
+  const { openUserProfile } = useClerk();
+  const dispatch = useDispatch();
 
   const logoutHandler = async (e) => {
     try {
@@ -112,7 +119,7 @@ const Profile = () => {
                 <div className='flex flex-col md:items-center items-start md:flex-row lg:gap-4 md:gap-3'>
                   <div className='font-bold text-xl sm:w-[100%]'> {user.username} </div>
                   <div className='flex w-full gap-2 pt-3'>
-                    <button className='bg-gray-200 w-[7rem] h-9 hover:bg-gray-300 p-1 px-2 rounded' onClick={() => { editProfile() }}> Edit Profile </button>
+                    <button className='bg-gray-200 w-[7rem] h-9 hover:bg-gray-300 p-1 px-2 rounded' onClick={() => { openUserProfile() }}> Edit Profile  </button>
                     <EditProfile open={isEditProfileOpen} setOpen={setIsEditProfileOpen} />
                     <button className='bg-gray-200 hover:bg-gray-300 p-1 px-2 rounded' onClick={logoutHandler} > Logout </button>
                   </div>
@@ -133,7 +140,7 @@ const Profile = () => {
                 className='w-[calc(33.333%-16px)] flex items-center shadow-md rounded-md overflow-hidden border cursor-pointer'>
                 <img
                   src={post.image}
-                  onClick={() => { setIsCommentOpen(true); setPost(post) }}
+                  onClick={() => { setIsCommentOpen(true); setPost(post); dispatch(setSelectedPost(post)) }}
                   className='w-full h-auto object-cover'
                   alt="Post Image"
                 />

@@ -3,14 +3,17 @@ import cloudinary from '../utils/cloudinary.js';
 import { Post } from '../models/post.model.js';
 import { User } from '../models/user.model.js';
 import { populate } from 'dotenv';
-import {Comment} from '../models/comment.model.js';
+import { Comment } from '../models/comment.model.js';
 import { create } from 'domain';
+// import { getAuth } from '@clerk/clerk-sdk-node';
 
 export const addNewPost = async (req, res) => {
     try {
         const { caption } = req.body;
         const image = req.file;
-        const authorId = req.id;
+        const userId = req.user._id; // 🧠 from middleware
+
+        console.log("adding new post for the userId - ", userId);
 
         if (!image) {
             return res.status(401).json({
@@ -19,12 +22,12 @@ export const addNewPost = async (req, res) => {
             })
         }
 
-        if (!authorId) {
-            return res.status(401).json({
-                message: "You are not logged in!",
-                success: false
-            })
-        }
+        // if (!authorId) {
+        //     return res.status(401).json({
+        //         message: "You are not logged in!",
+        //         success: false
+        //     })
+        // }
 
         // uplaoding image -->
         const optimizedImageBuffer = await sharp(image.buffer).resize({ width: 800, height: 800, fit: 'inside' })
@@ -40,19 +43,19 @@ export const addNewPost = async (req, res) => {
         const post = await Post.create({
             caption: caption,
             image: cloudResponse.secure_url,
-            author: authorId
+            authorId: userId, // ➔ Clerk UserId
+            author: userId
+            // clerk changes -->
         })
 
-        //pushing into the user's database -->
-        const user = await User.findById(authorId);
+        // pushing post._id into the user's posts array
+        const user = await User.findOne({ clerkUserId: userId });
         if (user) {
             user.posts.push(post._id);
             await user.save();
         }
 
         await post.populate({ path: 'author', select: '-password' });
-        // console.log("picture posted by post control: ", post);
-        // console.log("post added through post controller !")
 
         return res.status(201).json({
             message: "New post added",
@@ -72,16 +75,16 @@ export const getAllPosts = async (req, res) => {
             .populate({ path: 'author', select: 'username profilePicture' })
             .populate({
                 path: 'comments', sort: { createdAt: -1 },
-                populate: { path: 'author', select: 'username profilePicture' }
+                populate: { path: 'authorId', select: 'username profilePicture' }
             })
-            // console.log("Fetched posts:", JSON.stringify(posts, null, 2));
+        // console.log("Fetched posts:", JSON.stringify(posts, null, 2));
 
         return res.status(200).json({
             message: "Fetched all Posts",
             success: true,
             posts
         })
-        
+
 
     } catch (error) {
         console.log("unable to fetch all posts!")
@@ -91,12 +94,12 @@ export const getAllPosts = async (req, res) => {
 
 export const getUserPost = async (req, res) => {
     try {
-        const authorId = req.id;
+        const authorId = req.user; // 🧠 MongoDB user attached by clerkAuth middleware
         const posts = await Post.find({ author: authorId }).sort({ createdAt: -1 })
-            .populate({ path: 'author', select: 'username profilePicture' })
+            .populate({ path: 'authorId', select: 'username profilePicture' })
             .populate({
                 path: 'comments', sort: { createdAt: -1 },
-                populate: { path: 'author', select: 'username profilePicture' }
+                populate: { path: 'authorId', select: 'username profilePicture' }
             })
 
         return res.status(200).json({
@@ -111,18 +114,18 @@ export const getUserPost = async (req, res) => {
     }
 }
 
-export const getUserPostByID = async (req,res) => {
+export const getUserPostByID = async (req, res) => {
     try {
         const authorId = req.params.id;
         console.log("author id is: ", authorId);
         const posts = await Post.find({ author: authorId }).sort({ createdAt: -1 })
-            .populate({ path: 'author', select: 'username profilePicture' })
+            .populate({ path: 'authorId', select: 'username profilePicture' })
             .populate({
                 path: 'comments', sort: { createdAt: -1 },
-                populate: { path: 'author', select: 'username profilePicture' }
+                populate: { path: 'authorId', select: 'username profilePicture' }
             })
 
-            // console.log("Fetched posts are: ", posts)
+        // console.log("Fetched posts are: ", posts)
 
         return res.status(200).json({
             message: "Fetched user's Posts",
@@ -138,14 +141,16 @@ export const getUserPostByID = async (req,res) => {
 
 export const likePost = async (req, res) => {
     try {
-        const likeKarneWala = req.id;
+        console.log("like function called")
+        const likeKarneWala = req.user._id; // 🛠️ Proper way after Clerk
+        const clerkId = req.user.clerkUserId;
         const postId = req.params.id;
         const post = await Post.findById(postId);
 
         if (!post) return res.status(401).json({ message: 'post not found', succes: false });
 
         // like logic -->
-        await post.updateOne({ $addToSet: { likes: likeKarneWala } })
+        await post.updateOne({ $addToSet: { likes: likeKarneWala } });
         await post.save();
 
         return res.status(200).json({ message: "post liked", success: true });
@@ -158,7 +163,8 @@ export const likePost = async (req, res) => {
 
 export const dislikePost = async (req, res) => {
     try {
-        const dislikeKarneWala = req.id;
+        const dislikeKarneWala = req.user._id; // 🛠️ Proper way after Clerk
+        const clerkId = req.user.clerkUserId;
         const postId = req.params.id;
         const post = await Post.findById(postId);
 
@@ -179,7 +185,7 @@ export const dislikePost = async (req, res) => {
 export const addComment = async (req, res) => {
     try {
         const postId = req.params.id;
-        const commentKarneWala = req.id;
+        const commentKarneWala = req.user._id; // ✅ Correct: Clerk user ID
         const post = await Post.findById(postId);
         const { text } = req.body
 
@@ -188,13 +194,13 @@ export const addComment = async (req, res) => {
         //creating comment -->
         const comment = await Comment.create({
             text,
-            author: commentKarneWala,
+            authorId: commentKarneWala,
             post: postId
         });
 
         // Populating the author field of the newly created comment
         const populatedComment = await Comment.findById(comment._id)
-            .populate({ path: 'author', select: 'username profilePicture' });
+            .populate({ path: 'authorId', select: 'username profilePicture' });
 
         //pushing comment in the post -->
         post.comments.push(comment._id);
@@ -227,7 +233,7 @@ export const getCommentsByPost = async (req, res) => {
 export const deletePost = async (req, res) => {
     try {
         const postId = req.params.id;
-        const authorId = req.id;
+        const authorId = req.user;
 
         const post = await Post.findById(postId);
         if (!post) return res.status(200).json({ message: "cannot find post", success: false });
@@ -257,13 +263,13 @@ export const bookmarkPost = async (res, req) => {
     try {
         const postId = res.params.id;
         const post = await Post.findById(postId);
-        const authorId = req.id;
+        const authorId = req.user;
         const user = await User.findById(authorId);
         if (!post) return res.status(200).json({ message: "cannot find post", success: false });
 
         if (user.bookmarks.includes(post._id)) {
             // remove from bookmark
-            await user.updateOne({$pull: { bookmarks: post._id }})
+            await user.updateOne({ $pull: { bookmarks: post._id } })
             await user.save();
             return res.status(200).json({ type: "unsaved", message: "bookmark removed", success: true })
         }

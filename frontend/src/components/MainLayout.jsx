@@ -11,6 +11,9 @@ import SuggestedUsers from './SuggestedUsers'
 import AllProfileDialog from './AllProfileDialog'
 import { setPosts, setSelectedPost } from '@/redux/postSlice'
 import Messages from './Messages'
+import { SignOutButton, useClerk, UserButton } from '@clerk/clerk-react'
+import { useUser } from '@clerk/clerk-react';
+import { useAuth } from "@clerk/clerk-react";
 
 const MainLayout = () => {
   const options = [
@@ -20,18 +23,80 @@ const MainLayout = () => {
     { icon: <Upload />, text: 'New Post', link: '/addpost' },
   ]
 
-  const { user } = useSelector(store => store.auth);
+  const { user } = useUser();
   const dispatch = useDispatch();
+
+
+  if (!user) {
+    return <div>Loading...</div>;
+  }
+
+  console.log(user)
 
   const [isOpen, setIsOpen] = useState(false)
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const { getToken, isSignedIn } = useAuth();
 
   const navigate = useNavigate()
 
-  if (!user) {
-    console.log("there is no user!")
-    navigate('/login');
-  }
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      if (!isSignedIn) return;
+
+      const token = await getToken(); // ✅ This must return a JWT
+      if (!token) {
+        console.error("No token returned from Clerk.");
+        return;
+      }
+
+      // try {
+      //   const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/user/auth`, {
+      //     method: 'GET',
+      //     headers: {
+      //       Authorization: `Bearer ${token}`,
+      //     },
+      //     withCredentials: true,
+      //   })
+
+      //   console.log("User profile ensured");
+      //   console.log("User from backend:", res.data);
+      // } catch (err) {
+      //   console.error("Error ensuring user:", err);
+      // }
+
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/user/login`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include', // Include credentials in the request
+        })
+
+        const data = await res.json()
+
+        if (data.success) {
+          dispatch(setAuthUser(data.user))
+        }
+
+      } catch (error) {
+        console.log(error)
+        console.log("unable to Login")
+      }
+
+
+    };
+    fetchUser();
+  }, [getToken, isSignedIn]);
+
+
+  // if (!user) {
+  //   console.log("there is no user!")
+  //   navigate('/login');
+  // }
+
+  const { mongoUser} = useSelector(store => store.auth);
 
   const logoutHandler = async (e) => {
     try {
@@ -75,8 +140,8 @@ const MainLayout = () => {
     }
     else if (text === "New Post") {
       await setIsOpen(true);
-      console.log("clicked new post")
-      console.log(isOpen)
+      // console.log("clicked new post")
+      // console.log(isOpen)
     }
   }
 
@@ -126,22 +191,26 @@ const MainLayout = () => {
               </div>
             </div>
           </div>
-          <div onClick={logoutHandler} className='absolute bottom-6 left-8 transform rotate-180 text-red-500'> <a href=""> <LogOut onClick={logoutHandler} strokeWidth={3} /></a> </div>
+          <div onClick={logoutHandler} className='absolute bottom-6 left-8 transform rotate-180 text-red-500'>
+            <a href=""> <LogOut onClick={logoutHandler} strokeWidth={3} /></a>
+          </div>
+          <SignOutButton />
         </div>
       </div>
 
       <div className="flex flex-col w-full sm:w-5/6 h-full">
         <div className='w-full navbar-desktop hidden sm:block min-h-24 border shadow-md px-6 z-10 bg-[#F9F9FA]'>
-          <div className="flex items-center justify-between w-full h-full">
+          <div className="flex items-center justify-between w-full h-full md:pr-10">
             <div className='w-full'>
-              <h1 className='font-bold text-xl'>{`Hello ${user?.username}!`}</h1>
+              {/* <h1 className='font-bold text-xl'>{`Hello ${user?.username}!`}</h1> */}
+              <h1 className='font-bold text-xl'>{`Hello ${user.firstName}!`}</h1>
             </div>
-            <div className='flex items-center gap-4 h-full'>
+            <div className='flex items-center h-full'>
               <div className="search w-full cursor-pointer">
                 <Search size={28} strokeWidth={3.25} />
               </div>
-              <div className='cursor-pointer profile w-full flex items-center justify-end' onClick={() => goToProfile(user._id)}>
-                <img src={user?.profilePicture} alt={user?.username} className='cursor-pointer w-[7rem] rounded-full' />
+              <div className=' cursor-pointer profile w-8/12 flex items-center justify-end' onClick={() => goToProfile(mongoUser._id)}>
+                <img src={user?.imageUrl} alt={user?.username} className='cursor-pointer w-[7rem] rounded-full' />
               </div>
             </div>
           </div>
@@ -157,15 +226,14 @@ const MainLayout = () => {
             </div>
           </div>
 
-          <div className='flex gap-8 items-center'>
+          <div className='flex gap-3 items-center'>
             <div>
               <p> <Bell strokeWidth={3} /> </p>
             </div>
             <div className='cursor-pointer profile w-full flex items-center justify-end' onClick={() => goToProfile(user._id)}>
-              <img src={user?.profilePicture} alt={user?.username} className='cursor-pointer w-[3rem] rounded-full' />
+              <img src={user?.profilePicture} alt={user?.username} className='cursor-pointer w-[1rem] rounded-full' />
             </div>
           </div>
-
         </div>
 
         <div className="flex flex-row w-full h-full">
@@ -179,8 +247,8 @@ const MainLayout = () => {
         </div>
         <div className='home-bar fixed bottom-0 h-[4rem] bg-[#F9F9FA] border shadow-md  flex justify-center items-center rounded-t-[2rem] w-screen sm:hidden'>
           <ul className='flex justify-around w-full px-5'>
-            <li onClick={()=>{navigate('/');}} > <Home strokeWidth={3}/> </li>
-            <li onClick={()=>{setIsOpen(true);}}> <CirclePlus strokeWidth={3} /> </li>
+            <li onClick={() => { navigate('/'); }} > <Home strokeWidth={3} /> </li>
+            <li onClick={() => { setIsOpen(true); }}> <CirclePlus strokeWidth={3} /> </li>
             <li onClick={() => goToProfile(user._id)}> <User strokeWidth={3} /> </li>
           </ul>
         </div>

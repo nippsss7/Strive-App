@@ -13,12 +13,15 @@ import Profile from './components/Profile'
 import OtherProfile from './components/OtherProfile'
 import ProtectedRoute from './components/ProtectedRoute'
 import Cookies from 'js-cookie'
+import { SignedIn, SignedOut, SignInButton, SignUp, UserButton } from "@clerk/clerk-react";
+import { SignIn } from '@clerk/clerk-react'
+
 
 function App() {
   const [count, setCount] = useState(0)
 
   const token = Cookies.get('token');
-  console.log(token)
+  // console.log(token)
 
   const browserRouter = createBrowserRouter([
     // {
@@ -43,13 +46,16 @@ function App() {
         },
       ]
     },
+    // clerk changes -->
     {
       path: '/signup',
       element: <Signup />,
+      // element: <SignUp /> 
     },
     {
       path: '/login',
-      element: <Login />,
+      element: <Login />, 
+      // element: <SignIn /> 
     },
     {
       path: '*',
@@ -60,7 +66,16 @@ function App() {
   return (
     <>
       <div className='font-kumbh'>
-        <RouterProvider router={browserRouter} />
+        <SignedIn>
+          {/* <UserButton /> */}
+          <RouterProvider router={browserRouter} />
+        </SignedIn>
+        <SignedOut>
+          <div className="flex flex-col items-center justify-center min-h-screen">
+            <h1 className="text-2xl font-bold mb-4">Please Sign In</h1>
+            <SignInButton />
+          </div>
+        </SignedOut>
       </div>
     </>
   )

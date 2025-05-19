@@ -3,10 +3,14 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import CommentDialog from './CommentDialog';
 import EditProfile from './EditProfile';
+import { useDispatch } from 'react-redux';
+import { setSelectedPost } from '@/redux/postSlice';
 
 const OtherProfile = () => {
   const location = useLocation();
   const clickedId = location.state?.id;
+
+  const dispatch = useDispatch();
 
   console.log('Clicked ID:', clickedId);
   const [user, setUser] = useState(null);
@@ -37,31 +41,31 @@ const OtherProfile = () => {
     fetchUser();
   }, [clickedId]);
 
-    useEffect(() => {
-      const fetchPosts = async () => {
-        try {
-          const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/post/userpost/${clickedId}`, {
-            method: "GET",
-            credentials: 'include'
-          });
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/post/userpost/${clickedId}`, {
+          method: "GET",
+          credentials: 'include'
+        });
 
-          const data = await res.json();
-          console.log(data);
-          if (data.success) {
-            const currentPosts = data.posts;
-            console.log(currentPosts)
-            setPosts(currentPosts)
-            console.log(posts);
-          }
-
-        } catch (error) {
-          console.log("unable to fetch posts for profile page!")
-          console.log(error)
+        const data = await res.json();
+        console.log(data);
+        if (data.success) {
+          const currentPosts = data.posts;
+          console.log(currentPosts)
+          setPosts(currentPosts)
+          console.log(posts);
         }
-      }
 
-      fetchPosts()
-    }, [clickedId])
+      } catch (error) {
+        console.log("unable to fetch posts for profile page!")
+        console.log(error)
+      }
+    }
+
+    fetchPosts()
+  }, [clickedId])
 
 
   // console.log(user);
@@ -97,7 +101,7 @@ const OtherProfile = () => {
                 className='sm:w-[calc(50%-16px)] md:w-[calc(33.333%-16px)] flex items-center shadow-md rounded-md overflow-hidden border cursor-pointer'>
                 <img
                   src={post.image}
-                  onClick={() => { setIsCommentOpen(true); setPost(post) }}
+                  onClick={() => { setIsCommentOpen(true); setPost(post); dispatch(setSelectedPost(post)) }}
                   className='w-full h-auto object-cover'
                   alt="Post Image"
                 />

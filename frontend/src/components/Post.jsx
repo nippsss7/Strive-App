@@ -15,8 +15,11 @@ import { setPosts, setSelectedPost } from '@/redux/postSlice';
 
 const Post = ({ post, user }) => {
 
-  // if (!post) {
-  //   return <div>Loading...</div>; // or an appropriate loading/error message
+  if (!post) {
+    return <div>Loading...</div>; // or an appropriate loading/error message
+  }
+  // if (!post?.author) {
+  //   return <div>Invalid Post</div>;
   // }
 
   const [isCommentOpen, setIsCommentOpen] = useState(false)
@@ -65,9 +68,12 @@ const Post = ({ post, user }) => {
     }
   }
 
+
   const likeDislikeHandler = async () => {
     try {
       const action = liked ? 'dislike' : 'like';
+      console.log(action);
+      console.log("lilked or dislike")
       const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/post/${post._id}/${action}`, {
         method: 'GET',
         headers: {
@@ -114,18 +120,18 @@ const Post = ({ post, user }) => {
     setComment(e.target.value)
   }
 
-  
+
 
   return (
     <div className=" w-full max-w-[40rem] h-full flex justify-start items-center shadow-md border rounded-2xl bg-[#F9F9FA]">
       <div className="w-full m-auto min-h-full p-4 flex flex-col">
         <div className='p-2 pb-3 flex items-center gap-2'>
           <Avatar>
-            <AvatarImage src="https://github.com/shadcn.png" />
+            <AvatarImage src={post.author[0]?.profilePicture} />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
           <div className="flex w-full items-center justify-between">
-            <p className='font-bold w-full'>{`${post.author.username}`}</p>
+            <p className='font-bold w-full'>{post.author[0]?.username || "Unknown User"}</p>
             <div className='w-1/2 text-right p-2'>
               <DropdownMenu>
                 <DropdownMenuTrigger className="outline-none"><Ellipsis /></DropdownMenuTrigger>
@@ -160,7 +166,7 @@ const Post = ({ post, user }) => {
 
           <p className='font-bold'>{`${likeCount} Likes`}</p>
 
-          <p> <span className='font-bold'>{`${post.author.username}`}</span> {`${post.caption}`}</p>
+          <p> <span className='font-bold'>{`${post.author[0]?.username}`}</span> {`${post.caption}`}</p>
 
           <button className='text-left text-gray-500' onClick={() => { setIsCommentOpen(true); dispatch(setSelectedPost(post)) }}>{`View ${commentCount} Comments`}</button>
           <CommentDialog open={isCommentOpen} setOpen={setIsCommentOpen} content={post} comment={comment} />
