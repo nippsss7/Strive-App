@@ -18,13 +18,15 @@ const Home = () => {
 
     useGetAllPosts();
     // useValidate();
-    
 
+    if (!posts) {
+        return <div>Loading...</div>
+    }
 
     return (
         <div className='w-full flex p-4 pb-8 flex-col justify-start items-center gap-4 overflow-scroll' style={{ height: 'calc(100vh - 100px)' }}>
             {
-                posts.map((post) => <Post post={post} user={mongoUser} />)
+                posts?.map((post) => <Post post={post} user={mongoUser} />)
             }
         </div>
     )

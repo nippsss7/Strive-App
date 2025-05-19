@@ -167,7 +167,7 @@ const MainLayout = () => {
           </div>
 
           <div className="flex flex-col justify-center pl-2 border-b pb-6">
-            {options.map((option, index) => (
+            {options?.map((option, index) => (
               <a className='w-full hover:text-[#ff7d1a]' onClick={() => sideBarHandler(option.text)} key={(index)}>
                 <div className='flex items-center m-auto px-2 h-12 rounded-lg cursor-pointer'>
                   <p className='mr-3'>{option.icon}</p>

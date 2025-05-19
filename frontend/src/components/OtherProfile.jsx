@@ -95,7 +95,7 @@ const OtherProfile = () => {
             </div>
           </div>
           <div className='posts flex flex-wrap w-4/6 m-auto pt-12 gap-4'>
-            {posts.map(post => (
+            {posts?.map(post => (
               <div
                 key={post.id}
                 className='sm:w-[calc(50%-16px)] md:w-[calc(33.333%-16px)] flex items-center shadow-md rounded-md overflow-hidden border cursor-pointer'>
