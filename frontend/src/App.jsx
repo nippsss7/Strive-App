@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
@@ -15,13 +15,18 @@ import ProtectedRoute from './components/ProtectedRoute'
 import Cookies from 'js-cookie'
 import { SignedIn, SignedOut, SignInButton, SignUp, UserButton } from "@clerk/clerk-react";
 import { SignIn } from '@clerk/clerk-react'
+import { useSelector } from 'react-redux'
 
 
 function App() {
-  const [count, setCount] = useState(0)
+  const user = useSelector((state) => state.auth.mongoUser);
 
   const token = Cookies.get('token');
   // console.log(token)
+
+  useEffect(() => {
+    console.log('Hydrated Redux User:', user);
+  }, [user]);
 
   const browserRouter = createBrowserRouter([
     // {
