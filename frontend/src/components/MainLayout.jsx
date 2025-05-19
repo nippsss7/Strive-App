@@ -80,10 +80,13 @@ const MainLayout = () => {
 
         console.log("user fetched at MainLayout: ", data.user);
         console.log("data: ", data ) 
-        
+
         if (data.success) {
           dispatch(setAuthUser(data.user))
         }
+
+        console.log("API URL: ", `${import.meta.env.VITE_API_URL}/v1/user/login`);
+
 
       } catch (error) {
         console.log(error)
