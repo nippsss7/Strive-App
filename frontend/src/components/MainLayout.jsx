@@ -42,7 +42,9 @@ const MainLayout = () => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      if (!isSignedIn) return;
+      console.log("fetching user at MainLayout...")
+
+      if (!isSignedIn) return <div>not signed in...</div>;
 
       const token = await getToken(); // ✅ This must return a JWT
       if (!token) {
@@ -76,6 +78,9 @@ const MainLayout = () => {
 
         const data = await res.json()
 
+        console.log("user fetched at MainLayout: ", data.user);
+        console.log("data: ", data ) 
+        
         if (data.success) {
           dispatch(setAuthUser(data.user))
         }
