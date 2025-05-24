@@ -33,6 +33,9 @@ export const clerkAuth = [
       }
 
       req.user = user;
+      console.log("clerkAuth:: ", req.user);
+      console.log("clerk: ", user)
+
       next();
     } catch (error) {
       console.error('Clerk Auth Error:', error);
