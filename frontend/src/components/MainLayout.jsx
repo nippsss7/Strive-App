@@ -40,63 +40,63 @@ const MainLayout = () => {
   const navigate = useNavigate()
 
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      console.log("fetching user at MainLayout...")
+  // useEffect(() => {
+  //   const fetchUser = async () => {
+  //     console.log("fetching user at MainLayout...")
 
-      if (!isSignedIn) return <div>not signed in...</div>;
+  //     if (!isSignedIn) return <div>not signed in...</div>;
 
-      const token = await getToken(); // ✅ This must return a JWT
-      if (!token) {
-        console.error("No token returned from Clerk.");
-        return;
-      }
+  //     const token = await getToken(); // ✅ This must return a JWT
+  //     if (!token) {
+  //       console.error("No token returned from Clerk.");
+  //       return;
+  //     }
 
-      // try {
-      //   const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/user/auth`, {
-      //     method: 'GET',
-      //     headers: {
-      //       Authorization: `Bearer ${token}`,
-      //     },
-      //     withCredentials: true,
-      //   })
+  //     // try {
+  //     //   const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/user/auth`, {
+  //     //     method: 'GET',
+  //     //     headers: {
+  //     //       Authorization: `Bearer ${token}`,
+  //     //     },
+  //     //     withCredentials: true,
+  //     //   })
 
-      //   console.log("User profile ensured");
-      //   console.log("User from backend:", res.data);
-      // } catch (err) {
-      //   console.error("Error ensuring user:", err);
-      // }
+  //     //   console.log("User profile ensured");
+  //     //   console.log("User from backend:", res.data);
+  //     // } catch (err) {
+  //     //   console.error("Error ensuring user:", err);
+  //     // }
 
-      try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/user/login`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          credentials: 'include', // Include credentials in the request
-        })
+  //     try {
+  //       const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/user/login`, {
+  //         method: 'GET',
+  //         headers: {
+  //           'Content-Type': 'application/json'
+  //         },
+  //         credentials: 'include', // Include credentials in the request
+  //       })
 
-        const data = await res.json()
+  //       const data = await res.json()
 
-        console.log("user fetched at MainLayout: ", data.user);
-        console.log("data: ", data ) 
+  //       console.log("user fetched at MainLayout: ", data.user);
+  //       console.log("data: ", data ) 
 
-        if (data.success) {
-          dispatch(setAuthUser(data.user))
-        }
+  //       if (data.success) {
+  //         dispatch(setAuthUser(data.user))
+  //       }
 
-        console.log("API URL: ", `${import.meta.env.VITE_API_URL}/v1/user/login`);
-
-
-      } catch (error) {
-        console.log(error)
-        console.log("unable to Login")
-      }
+  //       console.log("API URL: ", `${import.meta.env.VITE_API_URL}/v1/user/login`);
 
 
-    };
-    fetchUser();
-  }, [getToken, isSignedIn]);
+  //     } catch (error) {
+  //       console.log(error)
+  //       console.log("unable to Login")
+  //     }
+
+
+  //   };
+  //   fetchUser();
+  // }, [getToken, isSignedIn]);
 
 
   // if (!user) {

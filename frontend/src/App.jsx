@@ -15,10 +15,74 @@ import ProtectedRoute from './components/ProtectedRoute'
 import Cookies from 'js-cookie'
 import { SignedIn, SignedOut, SignInButton, SignUp, UserButton } from "@clerk/clerk-react";
 import { SignIn } from '@clerk/clerk-react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { useAuth } from "@clerk/clerk-react";
+import { setAuthUser } from '@/redux/authSlice'
 
 
 function App() {
+  const { getToken, isSignedIn } = useAuth();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      console.log("fetching user at MainLayout...")
+
+      if (!isSignedIn) return <div>not signed in...</div>;
+
+      const token = await getToken(); // ✅ This must return a JWT
+      if (!token) {
+        console.error("No token returned from Clerk.");
+        return;
+      }
+
+      // try {
+      //   const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/user/auth`, {
+      //     method: 'GET',
+      //     headers: {
+      //       Authorization: `Bearer ${token}`,
+      //     },
+      //     withCredentials: true,
+      //   })
+
+      //   console.log("User profile ensured");
+      //   console.log("User from backend:", res.data);
+      // } catch (err) {
+      //   console.error("Error ensuring user:", err);
+      // }
+
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/user/login`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include', // Include credentials in the request
+        })
+
+        const data = await res.json()
+
+        console.log("user fetched at MainLayout: ", data.user);
+        console.log("data: ", data ) 
+
+        if (data.success) {
+          dispatch(setAuthUser(data.user))
+        }
+
+        console.log("API URL: ", `${import.meta.env.VITE_API_URL}/v1/user/login`);
+
+
+      } catch (error) {
+        console.log(error)
+        console.log("unable to Login")
+      }
+
+
+    };
+    fetchUser();
+  }, [getToken, isSignedIn]);
+
+
   const user = useSelector((state) => state.auth.mongoUser);
 
   const token = Cookies.get('token');
