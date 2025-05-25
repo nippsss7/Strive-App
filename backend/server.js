@@ -30,12 +30,23 @@ app.use(cors({
     allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
-// app.options("*", cors());
+// app.options('*', cors({
+//     origin: allowedOrigins,
+//     credentials: true,
+//     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+//     allowedHeaders: ["Content-Type", "Authorization"]
+// }));
 
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
+app.get("/", (req, res) => {
+    return res.status(200).json({
+        message: "Backend is working!",
+        success: true
+    });
+});
 
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/post", postRoute);
