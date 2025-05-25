@@ -55,7 +55,8 @@ function App() {
         const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/user/login`, {
           method: 'GET',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
           },
           credentials: 'include', // Include credentials in the request
         })
@@ -91,6 +92,13 @@ function App() {
   useEffect(() => {
     console.log('Hydrated Redux User:', user);
   }, [user]);
+
+  useEffect(() => {
+    console.log('Environment Variables:', {
+      VITE_API_URL: import.meta.env.VITE_API_URL,
+      NODE_ENV: import.meta.env.MODE
+    });
+  }, []);
 
   const browserRouter = createBrowserRouter([
     // {
