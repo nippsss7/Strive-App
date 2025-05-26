@@ -1,22 +1,26 @@
+import { useAuth } from '@clerk/clerk-react';
 import React, { useEffect, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom'
 
 const SuggestedUsers = () => {
     const [users, setUsers] = useState([]);
+  const { getToken, isSignedIn } = useAuth();
 
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchSuggestedUsers = async () => {
+            const token = await getToken();
             try {
-                const token = localStorage.getItem("token");
 
                 const response = await fetch(`${import.meta.env.VITE_API_URL}/v1/user/suggested`, {
                     method: "GET",
-                    credentials: "include",
                     headers: {
-                        "Content-Type": "application/json"   // Optional, but good practice
-                    }
+                        "Content-Type": "application/json",   // Optional, but good practice
+                        "Authorization": `Bearer ${token}`
+                    },
+                    credentials: "include"
+                    
                 });
                 const data = await response.json();
                 if (data.success) {

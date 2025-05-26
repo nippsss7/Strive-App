@@ -26,7 +26,6 @@ function App() {
 
   useEffect(() => {
     const fetchUser = async () => {
-      console.log("fetching user at MainLayout...")
 
       if (!isSignedIn) return <div>not signed in...</div>;
 
@@ -63,14 +62,10 @@ function App() {
 
         const data = await res.json()
 
-        console.log("user fetched at MainLayout: ", data.user);
-        console.log("data: ", data ) 
 
         if (data.success) {
           dispatch(setAuthUser(data.user))
         }
-
-        console.log("API URL: ", `${import.meta.env.VITE_API_URL}/v1/user/login`);
 
 
       } catch (error) {

@@ -31,8 +31,6 @@ const MainLayout = () => {
     return <div>Loading...</div>;
   }
 
-  console.log(user)
-
   const [isOpen, setIsOpen] = useState(false)
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { getToken, isSignedIn } = useAuth();
