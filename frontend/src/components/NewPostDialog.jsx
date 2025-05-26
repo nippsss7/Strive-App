@@ -9,12 +9,14 @@ import { readFileAsDataURL } from '@/lib/utils';
 import { toast } from 'sonner';
 import { useDispatch, useSelector } from 'react-redux';
 import { setPosts } from '@/redux/postSlice';
+import { useAuth } from '@clerk/clerk-react';
 
-const  NewPostDialog = ({ open, setOpen }) => {
+const NewPostDialog = ({ open, setOpen }) => {
+    const { getToken, isSignedIn } = useAuth();
 
     const imageRef = useRef();
     const dispatch = useDispatch();
-    const {posts} = useSelector(store => store.post)
+    const { posts } = useSelector(store => store.post)
 
     const [isLoading, setIsLoading] = useState(false)
     const [imagePreview, setImagePreview] = useState()
@@ -32,6 +34,7 @@ const  NewPostDialog = ({ open, setOpen }) => {
     }
 
     const createPostHandler = async (e) => {
+        const token = await getToken();
         setIsLoading(true);
         e.preventDefault();
         const formData = new FormData();
@@ -43,6 +46,7 @@ const  NewPostDialog = ({ open, setOpen }) => {
                 body: formData,
                 credentials: 'include',
                 headers: {
+                    'Authorization': `Bearer ${token}`
                 },
             });
 
@@ -50,7 +54,7 @@ const  NewPostDialog = ({ open, setOpen }) => {
             console.log(data)
             toast(data.message);
 
-            if(data.success){
+            if (data.success) {
                 dispatch(setPosts([data.post, ...posts]))
             }
 
