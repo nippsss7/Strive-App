@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.route("/addpost").post(clerkAuth, upload.single('image'), addNewPost);
 router.route("/all").get(clerkAuth, getAllPosts);
-router.route("/userpost/all").get(clerkAuth, getUserPost);
+router.route("/userpost/all").get(getUserPost);
 router.route("/:id/like").get(clerkAuth, likePost);
 router.route("/:id/dislike").get(clerkAuth, dislikePost);
 router.route("/:id/comment").post(clerkAuth, addComment);

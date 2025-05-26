@@ -12,8 +12,10 @@ import CommentDialog from './CommentDialog';
 import { FaHeart } from "react-icons/fa";
 import { useDispatch, useSelector } from 'react-redux';
 import { setPosts, setSelectedPost } from '@/redux/postSlice';
+import { useAuth } from '@clerk/clerk-react';
 
 const Post = ({ post, user }) => {
+  const { getToken, isSignedIn } = useAuth();
 
   if (!post) {
     return <div>Loading...</div>; // or an appropriate loading/error message
@@ -33,12 +35,14 @@ const Post = ({ post, user }) => {
   const dispatch = useDispatch();
 
   const addComment = async () => {
+    const token = await getToken();
     console.log("post id is: ", post._id)
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/post/${post._id}/comment`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         credentials: 'include',
         body: JSON.stringify({ text: comment })
@@ -70,6 +74,7 @@ const Post = ({ post, user }) => {
 
 
   const likeDislikeHandler = async () => {
+    const token = await getToken();
     try {
       const action = liked ? 'dislike' : 'like';
       console.log(action);
@@ -77,7 +82,8 @@ const Post = ({ post, user }) => {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/post/${post._id}/${action}`, {
         method: 'GET',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         credentials: 'include',
       })
