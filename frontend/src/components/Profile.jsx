@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 import { setSelectedPost } from '@/redux/postSlice';
 import { UserButton } from '@clerk/clerk-react';
 import { useClerk } from '@clerk/clerk-react';
+import useAuth from '@/hooks/useAuth';
 
 const Profile = () => {
   const location = useLocation();
@@ -17,6 +18,7 @@ const Profile = () => {
   const [isCommentOpen, setIsCommentOpen] = useState(false)
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false)
   const [post, setPost] = useState(null)
+  const {isSignedIn, getToken} = useAuth();
 
   const { openUserProfile } = useClerk();
   const dispatch = useDispatch();
@@ -74,6 +76,7 @@ const Profile = () => {
 
   useEffect(() => {
     const fetchPosts = async () => {
+      const token = await getToken();
       try {
         const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/post/userpost/all`, {
           method: "GET",
