@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 import { setSelectedPost } from '@/redux/postSlice';
 import { UserButton } from '@clerk/clerk-react';
 import { useClerk } from '@clerk/clerk-react';
-import useAuth from '@/hooks/useAuth';
+import { useAuth } from '@clerk/clerk-react'
 
 const Profile = () => {
   const location = useLocation();
