@@ -5,10 +5,12 @@ import CommentDialog from './CommentDialog';
 import EditProfile from './EditProfile';
 import { useDispatch } from 'react-redux';
 import { setSelectedPost } from '@/redux/postSlice';
+import { useAuth } from '@clerk/clerk-react';
 
 const OtherProfile = () => {
   const location = useLocation();
   const clickedId = location.state?.id;
+  const {isSignedin, getToken} = useAuth();
 
   const dispatch = useDispatch();
 
@@ -43,9 +45,14 @@ const OtherProfile = () => {
 
   useEffect(() => {
     const fetchPosts = async () => {
+      const token = await getToken();
       try {
         const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/post/userpost/${clickedId}`, {
           method: "GET",
+          headers:{
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
           credentials: 'include'
         });
 
