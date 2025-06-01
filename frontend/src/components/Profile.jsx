@@ -77,6 +77,10 @@ const Profile = () => {
       try {
         const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/post/userpost/all`, {
           method: "GET",
+          headers:{
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
           credentials: 'include'
           // body: JSON.stringify(input)
         });
