@@ -156,8 +156,12 @@ const Post = ({ post, user }) => {
           <img
             src={post.image}
             alt={post.caption || "Post image"}
-            className="max-w-full"
+            className="max-w-full h-full object-cover"
             loading="lazy"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = 'https://via.placeholder.com/400x400?text=Image+Not+Found';
+            }}
           />
         </figure>
 

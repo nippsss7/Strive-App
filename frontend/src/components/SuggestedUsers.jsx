@@ -10,6 +10,7 @@ const SuggestedUsers = () => {
 
     useEffect(() => {
         const fetchSuggestedUsers = async () => {
+            console.log("fetching suggested users");
             const token = await getToken();
             try {
 
