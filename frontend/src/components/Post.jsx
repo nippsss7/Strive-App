@@ -129,7 +129,7 @@ const Post = ({ post, user }) => {
 
 
   return (
-    <div className=" w-full max-w-[40rem] h-full flex justify-start items-center shadow-md border rounded-2xl bg-[#F9F9FA]">
+    <div className=" w-full max-w-[40rem] h-auto flex justify-start items-center shadow-md border rounded-2xl bg-[#F9F9FA]">
       <div className="w-full m-auto min-h-full p-4 flex flex-col">
         <div className='p-2 pb-3 flex items-center gap-2'>
           <Avatar>
@@ -152,7 +152,7 @@ const Post = ({ post, user }) => {
           </div>
         </div>
 
-        <figure className="flex flex-col justify-center items-center border w-full m-auto max-h-[30rem] min-h-[30rem] bg-[#fdfdfd] shadow-sm rounded-xl overflow-hidden">
+        <figure className="flex flex-col justify-center items-center border w-full m-auto max-h-[20rem] min-h-[20rem] md:max-h-[30rem] md:min-h-[30rem] bg-[#fdfdfd] shadow-sm rounded-xl overflow-hidden">
           <img
             src={post.image}
             alt={post.caption || "Post image"}
@@ -165,7 +165,7 @@ const Post = ({ post, user }) => {
           />
         </figure>
 
-        <div className="flex flex-col p-2 pt-4 gap-2">
+        <div className="flex flex-col p-2 pt-4 gap-1 md:gap-2">
           <div className="flex flex-row gap-4 ">
             {
               liked ? <FaHeart className='text-red-500 cursor-pointer' onClick={() => likeDislikeHandler()} size={24} /> : <Heart className=' cursor-pointer' onClick={() => likeDislikeHandler()} />
@@ -181,8 +181,8 @@ const Post = ({ post, user }) => {
           <button className='text-left text-gray-500' onClick={() => { setIsCommentOpen(true); dispatch(setSelectedPost(post)) }}>{`View ${commentCount} Comments`}</button>
           <CommentDialog open={isCommentOpen} setOpen={setIsCommentOpen} content={post} comment={comment} />
 
-          <div className='border-b flex justify-between'>
-            <input type="text" name='comment' value={comment} onChange={handleChange} className='active:bg-transparent bg-transparent py-3 w-full outline-none' placeholder='Add a Comment...' />
+          <div className='border-b flex justify-between h-[2rem]'>
+            <input type="text" name='comment' value={comment} onChange={handleChange} className='active:bg-transparent  bg-transparent py-0 md:py-3 w-full outline-none' placeholder='Add a Comment...' />
             <button className='p-3' onClick={() => addComment()}> <Forward /> </button>
           </div>
         </div>

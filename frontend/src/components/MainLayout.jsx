@@ -255,7 +255,7 @@ const MainLayout = () => {
           <ul className='flex justify-around w-full px-5'>
             <li onClick={() => { navigate('/'); }} > <Home strokeWidth={3} /> </li>
             <li onClick={() => { setIsOpen(true); }}> <CirclePlus strokeWidth={3} /> </li>
-            <li onClick={() => goToProfile(user._id)}> <User strokeWidth={3} /> </li>
+            <li onClick={() => goToProfile(mongoUser._id)}> <User strokeWidth={3} /> </li>
           </ul>
         </div>
       </div>
