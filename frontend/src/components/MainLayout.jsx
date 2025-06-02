@@ -158,7 +158,7 @@ const MainLayout = () => {
 
 
   return (
-    <div className='flex w-full h-screen overflow-hidden' >
+    <div className='flex w-full h-screen overflow-hidden pb-[4rem] md:pb-0' >
       <div className="sideBar bg-[#F9F9FA] border shadow-md h-full xl:w-1/6 lg:w-1/5 md:w-1/4 hidden sm:block">
         <div className="flex flex-col items-center justify-around pt-[4rem] pb-[6rem] w-full h-full">
           <div className="text-center pb-12  ">
@@ -243,7 +243,7 @@ const MainLayout = () => {
         </div>
 
         <div className="flex flex-row w-full h-full">
-          <div className="w-full h-full max-h-full overflow-auto overflow-x-hidden flex justify-center items-center">
+          <div className="w-full h-full max-h-full overflow-auto overflow-x-hidden flex justify-center items-center pb-[5rem] pt-[2rem] md:p-0">
             <Outlet />
           </div>
           <Messages />
