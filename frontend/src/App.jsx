@@ -7,6 +7,7 @@ import { Button } from './components/ui/button.jsx'
 import Signup from './components/Signup'
 import Login from './components/Login'
 import Home from './components/Home'
+import LandingPage from './components/LandingPage'
 import MainLayout from './components/MainLayout'
 import { createBrowserRouter, Navigate, RouterProvider, useNavigate } from 'react-router-dom'
 import Profile from './components/Profile'
@@ -18,6 +19,7 @@ import { SignIn } from '@clerk/clerk-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useAuth } from "@clerk/clerk-react";
 import { setAuthUser } from '@/redux/authSlice'
+
 
 
 function App() {
@@ -143,9 +145,10 @@ function App() {
           <RouterProvider router={browserRouter} />
         </SignedIn>
         <SignedOut>
-          <div className="flex flex-col items-center justify-center min-h-screen">
-            <h1 className="text-2xl font-bold mb-4">Please Sign In</h1>
-            <SignInButton />
+          <div className="flex flex-col w-full h-full items-center justify-center min-h-screen">
+            {/* <h1 className="text-2xl font-bold mb-4">Please Sign In</h1>
+            <SignInButton /> */}
+          <LandingPage /> 
           </div>
         </SignedOut>
       </div>
