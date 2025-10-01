@@ -59,35 +59,30 @@ export default function LampDemo() {
         </div>
       </div>
 
-      <div className="flex justify-center items-center h-full py-10 mt-0 md:mt-12">
-        <LampContainer className="h-full pt-[7rem] sm:pt-12 flex items-center justify-center ">
+      <div className="lamp-adjust flex justify-center items-center h-full py-10 md:mt-14">
+        <LampContainer className="flex items-center justify-center min-h-screen px-4 sm:px-6">
           <motion.h1
             initial={{ opacity: 0.5, y: 100 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.8, ease: "easeInOut" }}
-            className="mt-0 sm:mt-8 bg-gradient-to-br from-slate-300 to-slate-500 py-4 bg-clip-text text-center text-4xl font-medium tracking-tight text-transparent md:text-7xl"
+            className="text-center bg-gradient-to-br from-slate-300 to-slate-500 bg-clip-text text-3xl sm:text-5xl md:text-7xl font-bold tracking-tight text-transparent"
           >
-
-            <div className="flex flex-col items-center text-center justify-center h-full">
-              <h1 className="text-4xl md:text-6xl font-bold mb-6">
-                <span className=" text-[#ff7d1a]">Connect.</span> Share. Belong.
+            <div className="text-control flex flex-col items-center justify-center gap-6 max-sm:mt-[5rem] sm:mt-[13rem] max-sm:mb-[4rem]">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold">
+                <span className="text-[#ff7d1a]">Connect.</span> Share. Belong.
               </h1>
-              <p className="text-lg sm:text-xl text-gray-600 mb-8 max-w-2xl">
+              <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-xl">
                 Join a new kind of social network — where your voice matters, your identity is celebrated, and your experience is truly yours.
               </p>
-              <div className="flex gap-4">
-                {/* <button className="bg-[#ff7d1a] w-24 text-lg text-white px-8 py-3 rounded-full font-semibold hover:bg-blue-700 transition duration-300">
-                  Login
-                </button> */}
-                <SignInButton className=" w-auto bg-[#ff7d1a] w-24 text-lg text-white px-8 py-3 rounded-full font-semibold hover:bg-[#a05c28] transition duration-200"> Get Started</SignInButton>
-                {/* <button className="border border-[#ff7d1a] text-[#ff7d1a] px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition duration-300">
-              Learn More
-            </button> */}
+              <div className="flex flex-wrap justify-center gap-4">
+                <SignInButton className="bg-[#ff7d1a] text-white px-6 py-3 text-lg rounded-full font-semibold hover:bg-[#a05c28] transition duration-200">
+                  Get Started
+                </SignInButton>
               </div>
             </div>
-
           </motion.h1>
         </LampContainer>
+
       </div>
       {/* <div className="absolute left-[2rem] bottom-[5rem]">
         <img src="undraw_grass.svg" className="w-[70%]" alt="" srcset="" />

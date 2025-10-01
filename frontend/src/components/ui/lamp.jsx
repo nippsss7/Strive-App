@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils"; // You can replace this with `clsx` or remove 
 
 export function LampContainer({ children, className }) {
   return (
-    <div className={`relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-slate-950 w-full rounded-md z-0 ${className || ""}`}>
+    <div className={` lamp-height-fix pt-[12rem] relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-slate-950 w-full rounded-md z-0 ${className || ""}`}>
       <div className="relative flex w-full flex-1 scale-y-125 items-center justify-center isolate z-0 ">
         <motion.div
           initial={{ opacity: 0, width: "10rem" }}

@@ -11,3 +11,18 @@
 *{
     font-family: 'kumbh';
 } */
+
+@media (max-height: 765px) {
+    .lamp-adjust {
+      transform: translateY(7rem);
+      padding-top: 7rem;
+      height: 70vh;
+    }
+    .text-control{
+        padding-top: 7rem;
+    }
+    .lamp-height-fix{
+        padding-top: 21rem
+    }
+  }
+  
