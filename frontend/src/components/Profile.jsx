@@ -116,19 +116,19 @@ const Profile = () => {
   return (
     <div className='profilePage h-full w-full'>
       {user && posts ? ( // Conditional rendering
-        <div className="flex flex-col py-[3rem] sm:py-[5rem] mx-2">
-          <div className='info lg:w-5/6 m-auto border-b pb-[3rem]'>
+        <div className="flex flex-col py-[0rem] sm:py-[5rem] mx-2  max-sm:pb-[7rem]">
+          <div className='info lg:w-5/6 m-auto border-b pb-[1rem] sm:pb-[3rem]'>
             <div className="flex lg:gap-[5rem] md:gap-[3rem] gap-[2rem] items-center justify-center">
               <div>
-                <img src={user.profilePicture} className='w-[8rem] h-[8rem] sm:w-[12rem] sm:h-[12rem] border rounded-full' alt="profile picture" />
+                <img src={user.profilePicture} className='w-[8rem] h-[7.5rem] sm:w-[12rem] sm:h-[12rem] border rounded-full' alt="profile picture" />
               </div>
               <div className='flex flex-col gap-4'>
                 <div className='flex flex-col md:items-center items-start md:flex-row lg:gap-4 md:gap-3'>
                   <div className='font-bold text-xl sm:w-[100%]'> {user.username} </div>
                   <div className='flex w-full gap-2 pt-3'>
-                    <button className='bg-gray-200 w-[7rem] h-9 hover:bg-gray-300 p-1 px-2 rounded' onClick={() => { openUserProfile() }}> Edit Profile  </button>
+                    <button className='bg-gray-200 sm:w-[7rem] max-sm:text-sm h-9 hover:bg-gray-300 p-1 px-2 rounded' onClick={() => { openUserProfile() }}> Edit Profile  </button>
                     <EditProfile open={isEditProfileOpen} setOpen={setIsEditProfileOpen} />
-                    <button className='bg-gray-200 hover:bg-gray-300 p-1 px-2 rounded' onClick={logoutHandler} > Logout </button>
+                    <button className='bg-gray-200 hover:bg-gray-300 max-sm:text-sm p-1 px-2 rounded' onClick={logoutHandler} > Logout </button>
                   </div>
                 </div>
                 <div className='flex gap-6'>
@@ -136,7 +136,7 @@ const Profile = () => {
                   <div> {user.followers.length} Followers</div>
                   <div> {user.following.length} following</div>
                 </div>
-                <div> this is your BIO </div>
+                <div> Your BIO </div>
               </div>
             </div>
           </div>
@@ -155,9 +155,6 @@ const Profile = () => {
             ))}
             <CommentDialog open={isCommentOpen} setOpen={setIsCommentOpen} content={post} />
           </div>
-
-
-
 
 
         </div>

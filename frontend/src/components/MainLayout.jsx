@@ -190,7 +190,7 @@ const MainLayout = () => {
                 <p className='text-sm text-gray-500 cursor-pointer' onClick={() => { setIsProfileOpen(true) }}>all</p>
               </div>
               <AllProfileDialog open={isProfileOpen} setOpen={setIsProfileOpen} />
-              <div className='flex flex-col justify-center w-full'>
+              <div className='flex flex-col justify-center w-full h-[25vh] overflow-scroll overflow-x-hidden'>
                 <ul className='flex flex-col justify-center'>
                   <SuggestedUsers />
                 </ul>
