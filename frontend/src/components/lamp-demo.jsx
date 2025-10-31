@@ -75,7 +75,7 @@ export default function LampDemo() {
                 Join a new kind of social network — where your voice matters, your identity is celebrated, and your experience is truly yours.
               </p>
               <div className="flex flex-wrap justify-center gap-4">
-                <SignInButton className="bg-[#ff7d1a] text-white px-6 py-3 text-lg rounded-full font-semibold hover:bg-[#a05c28] transition duration-200">
+                <SignInButton className="bg-[#ff7d1a] text-white px-6 py-3 text-lg rounded-full font-semibold hover:bg-[#ff892edf] hover:scale-105 transition duration-200">
                   Get Started
                 </SignInButton>
               </div>
