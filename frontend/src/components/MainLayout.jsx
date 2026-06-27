@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { Outlet, useNavigate } from 'react-router-dom'
-import React, { useEffect, useState } from 'react'
-import { House, UserPen, Send, Search, Upload, LogOut, Home, User, CirclePlus, Bell } from 'lucide-react'
+import React, { useState } from 'react'
+import { House, Search, LogOut, Home, User, CirclePlus, Bell, Compass } from 'lucide-react'
 import { BellDot } from 'lucide-react'
 import { toast } from 'sonner'
 import NewPostDialog from './NewPostDialog'
@@ -11,258 +11,194 @@ import SuggestedUsers from './SuggestedUsers'
 import AllProfileDialog from './AllProfileDialog'
 import { setPosts, setSelectedPost } from '@/redux/postSlice'
 import Messages from './Messages'
-import { SignOutButton, useClerk, UserButton } from '@clerk/clerk-react'
 import { useUser } from '@clerk/clerk-react';
-import { useAuth } from "@clerk/clerk-react";
 
 const MainLayout = () => {
-  const options = [
-    { icon: <House />, text: 'Home', link: '' },
-    { icon: <Search />, text: 'For You', link: '/profile' },
-    { icon: <BellDot />, text: 'Notifications', link: '/profile' },
-    { icon: <Upload />, text: 'New Post', link: '/addpost' },
-  ]
-
   const { user } = useUser();
   const dispatch = useDispatch();
+  const [isOpen, setIsOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
+  const navigate = useNavigate();
+  const { mongoUser } = useSelector(store => store.auth);
 
   if (!user) {
-    return <div>Loading...</div>;
-  }
-
-  const [isOpen, setIsOpen] = useState(false)
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const { getToken, isSignedIn } = useAuth();
-
-  const navigate = useNavigate()
-
-
-  // useEffect(() => {
-  //   const fetchUser = async () => {
-  //     console.log("fetching user at MainLayout...")
-
-  //     if (!isSignedIn) return <div>not signed in...</div>;
-
-  //     const token = await getToken(); // ✅ This must return a JWT
-  //     if (!token) {
-  //       console.error("No token returned from Clerk.");
-  //       return;
-  //     }
-
-  //     // try {
-  //     //   const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/user/auth`, {
-  //     //     method: 'GET',
-  //     //     headers: {
-  //     //       Authorization: `Bearer ${token}`,
-  //     //     },
-  //     //     withCredentials: true,
-  //     //   })
-
-  //     //   console.log("User profile ensured");
-  //     //   console.log("User from backend:", res.data);
-  //     // } catch (err) {
-  //     //   console.error("Error ensuring user:", err);
-  //     // }
-
-  //     try {
-  //       const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/user/login`, {
-  //         method: 'GET',
-  //         headers: {
-  //           'Content-Type': 'application/json'
-  //         },
-  //         credentials: 'include', // Include credentials in the request
-  //       })
-
-  //       const data = await res.json()
-
-  //       console.log("user fetched at MainLayout: ", data.user);
-  //       console.log("data: ", data ) 
-
-  //       if (data.success) {
-  //         dispatch(setAuthUser(data.user))
-  //       }
-
-  //       console.log("API URL: ", `${import.meta.env.VITE_API_URL}/v1/user/login`);
-
-
-  //     } catch (error) {
-  //       console.log(error)
-  //       console.log("unable to Login")
-  //     }
-
-
-  //   };
-  //   fetchUser();
-  // }, [getToken, isSignedIn]);
-
-
-  // if (!user) {
-  //   console.log("there is no user!")
-  //   navigate('/login');
-  // }
-
-  const { mongoUser} = useSelector(store => store.auth);
-
-  const logoutHandler = async (e) => {
-    try {
-      e.preventDefault();
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/user/logout`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include', // Include credentials in the request
-      })
-
-      const data = await res.json()
-      console.log(data)
-      console.log(data.success)
-      toast(data.message);
-      console.log(data.status)
-
-      if (data.success) {
-        navigate('/login');
-        dispatch(setAuthUser(null));
-        dispatch(setSelectedPost(null));
-        dispatch(setPosts([]))
-      }
-
-    } catch (error) {
-      console.log(error)
-      console.log("unable to logout")
-    }
-  }
-
-  const sideBarHandler = async (text) => {
-    if (text === "Home") {
-      navigate('/');
-    }
-    else if (text === "For You") {
-      navigate('/profile');
-    }
-    else if (text === "Notifications") {
-      navigate('/profile');
-    }
-    else if (text === "New Post") {
-      await setIsOpen(true);
-      // console.log("clicked new post")
-      // console.log(isOpen)
-    }
-  }
-
-  const goToProfile = async (clickedId) => {
-    console.log(clickedId);
-    navigate(`/profile`, { state: { clickedId } });
-  }
-
-
-  return (
-    <div className='flex w-full h-screen overflow-hidden pb-[4rem] md:pb-0' >
-      <div className="sideBar bg-[#F9F9FA] border shadow-md h-full xl:w-1/6 lg:w-1/5 md:w-1/4 hidden sm:block">
-        <div className="flex flex-col items-center justify-around pt-[4rem] pb-[6rem] w-full h-full">
-          <div className="text-center pb-12  ">
-            <div className='w-full h-full bg-[#ff7d1a] p-[3px] rounded-[10px] '>
-              <div className='w-full h-full bg-[#ff7d1a] p-2 px-3 rounded-lg border-[3px] border-white'>
-                <h1 className="text-2xl font-bold">
-                  <span className="text-white font-extrabold">Striv</span>
-                  <span className=" text-black">Ve</span>
-                </h1>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex flex-col justify-center pl-2 border-b pb-6">
-            {options?.map((option, index) => (
-              <a className='w-full hover:text-[#ff7d1a]' onClick={() => sideBarHandler(option.text)} key={(index)}>
-                <div className='flex items-center m-auto px-2 h-12 rounded-lg cursor-pointer'>
-                  <p className='mr-3'>{option.icon}</p>
-                  <p className="text-md text-gray-70 w-[7rem] font-bold">{option.text}</p>
-                </div>
-              </a>
-            ))}
-            <NewPostDialog open={isOpen} setOpen={setIsOpen} />
-          </div>
-          <div className='w-full lg:px-4 md:px-3 mt-10'>
-            <div className='flex flex-col justify-center items-center w-full max-w-[10rem] m-auto'>
-              <div className='flex flex-row justify-between items-center w-full'>
-                <h2 className=' font-bold my-4 '>Your Favorites</h2>
-                <p className='text-sm text-gray-500 cursor-pointer' onClick={() => { setIsProfileOpen(true) }}>all</p>
-              </div>
-              <AllProfileDialog open={isProfileOpen} setOpen={setIsProfileOpen} />
-              <div className='flex flex-col w-full h-[25vh] overflow-scroll overflow-x-hidden'>
-                <ul className='flex flex-col justify-center'>
-                  <SuggestedUsers />
-                </ul>
-              </div>
-            </div>
-          </div>
-          <div onClick={logoutHandler} className='absolute bottom-6 left-8 transform rotate-180 text-red-500'>
-            <a href=""> <LogOut onClick={logoutHandler} strokeWidth={3} /></a>
-          </div>
-          <SignOutButton />
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 border-4 border-[#ff7d1a] border-t-transparent rounded-full animate-spin" />
+          <p className="text-gray-400 text-sm">Loading...</p>
         </div>
       </div>
+    );
+  }
 
-      <div className="flex flex-col w-full sm:w-5/6 h-full">
-        <div className='w-full navbar-desktop hidden sm:block min-h-24 border shadow-md px-6 z-10 bg-[#F9F9FA]'>
-          <div className="flex items-center justify-between w-full h-full md:pr-10">
-            <div className='w-full'>
-              {/* <h1 className='font-bold text-xl'>{`Hello ${user?.username}!`}</h1> */}
-              <h1 className='font-bold text-xl'>{`Hello ${user.firstName}!`}</h1>
+  const navItems = [
+    { icon: <House size={20} />, text: 'Home', action: () => navigate('/') },
+    { icon: <Compass size={20} />, text: 'Explore', action: () => navigate('/profile') },
+    { icon: <BellDot size={20} />, text: 'Notifications', action: () => navigate('/profile') },
+    { icon: <CirclePlus size={20} />, text: 'New Post', action: () => setIsOpen(true) },
+  ];
+
+  const logoutHandler = async (e) => {
+    e?.preventDefault();
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/user/logout`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+      });
+      const data = await res.json();
+      if (data.success) {
+        dispatch(setAuthUser(null));
+        dispatch(setSelectedPost(null));
+        dispatch(setPosts([]));
+        toast.success('Logged out successfully');
+        navigate('/');
+      }
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
+  const goToProfile = (id) => {
+    navigate(`/profile`, { state: { clickedId: id } });
+  };
+
+  return (
+    <div className='flex w-full h-screen overflow-hidden pb-[4rem] md:pb-0'>
+      {/* Sidebar */}
+      <aside className="hidden sm:flex flex-col bg-white border-r border-gray-100 shadow-sm h-full xl:w-[220px] lg:w-[200px] md:w-[180px] shrink-0">
+        {/* Logo */}
+        <div className="px-5 py-6 border-b border-gray-100">
+          <div className='inline-flex items-center gap-1 bg-[#ff7d1a] rounded-xl px-3 py-2 shadow-sm'>
+            <span className="text-white font-black text-xl tracking-tight">Strive</span>
+          </div>
+        </div>
+
+        {/* Scrollable middle — nav + people */}
+        <div className="flex-1 overflow-y-auto flex flex-col">
+          {/* Nav items */}
+          <nav className="flex flex-col gap-1 px-3 py-4">
+            {navItems.map((item, index) => (
+              <button
+                key={index}
+                onClick={item.action}
+                className='flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-[#ff7d1a]/10 hover:text-[#ff7d1a] font-medium text-sm transition-all duration-150 w-full text-left'
+              >
+                {item.icon}
+                <span>{item.text}</span>
+              </button>
+            ))}
+            <NewPostDialog open={isOpen} setOpen={setIsOpen} />
+          </nav>
+
+          {/* People */}
+          <div className='px-4 pt-3 pb-4 border-t border-gray-100'>
+            <div className='flex items-center justify-between mb-2'>
+              <h2 className='font-semibold text-xs text-gray-500 uppercase tracking-wider'>People</h2>
+              <button
+                className='text-xs text-[#ff7d1a] font-medium hover:underline'
+                onClick={() => setIsProfileOpen(true)}
+              >
+                See all
+              </button>
             </div>
-            <div className='flex items-center h-full'>
-              <div className="search w-full cursor-pointer">
-                <Search size={28} strokeWidth={3.25} />
-              </div>
-              <div className=' cursor-pointer profile w-8/12 flex items-center justify-end' onClick={() => goToProfile(mongoUser._id)}>
-                <img src={user?.imageUrl} alt={user?.username} className='cursor-pointer w-[7rem] rounded-full' />
-              </div>
+            <AllProfileDialog open={isProfileOpen} setOpen={setIsProfileOpen} />
+            <div className='flex flex-col gap-0.5'>
+              <SuggestedUsers limit={6} />
             </div>
           </div>
         </div>
 
-        <div className=" w-full navbar-mobile flex items-center justify-between sm:hidden min-h-24 border shadow-md px-6 z-10 bg-[#F9F9FA] rounded-b-lg">
-          <div className='w-[6.8rem] h-[3.5rem] bg-[#ff7d1a] p-[3px] rounded-[10px] '>
-            <div className='w-full h-full bg-[#ff7d1a] p-2 px-3 rounded-lg border-[3px] border-white'>
-              <h1 className="text-xl font-bold">
-                <span className="text-white font-extrabold">Striv</span>
-                <span className=" text-black">Ve</span>
-              </h1>
-            </div>
-          </div>
-
-          <div className='flex gap-3 items-center'>
-            <div>
-              <p> <Bell strokeWidth={3} /> </p>
-            </div>
-            <div className='cursor-pointer profile w-full flex items-center justify-end' onClick={() => goToProfile(user._id)}>
-              <img src={user?.profilePicture} alt={user?.username} className='cursor-pointer w-[1rem] rounded-full' />
-            </div>
-          </div>
+        {/* Logout */}
+        <div className='px-4 py-4 border-t border-gray-100 shrink-0'>
+          <button
+            onClick={logoutHandler}
+            className='flex items-center gap-2 text-red-400 hover:text-red-600 transition-colors text-sm font-medium w-full'
+          >
+            <LogOut size={18} strokeWidth={2} />
+            <span>Log out</span>
+          </button>
         </div>
+      </aside>
 
-        <div className="flex flex-row w-full h-full">
-          <div className="w-full h-full max-h-full overflow-auto overflow-x-hidden flex justify-center items-center pb-[5rem] pt-[2rem] md:p-0">
+      {/* Main content */}
+      <div className="flex flex-col flex-1 h-full overflow-hidden">
+        {/* Desktop navbar */}
+        <header className='hidden sm:flex items-center justify-between w-full min-h-[4.5rem] border-b border-gray-100 shadow-sm px-6 bg-white z-10 shrink-0'>
+          <div>
+            <h1 className='font-bold text-lg text-gray-800'>
+              Welcome back, <span className='text-[#ff7d1a]'>{user.firstName}!</span>
+            </h1>
+          </div>
+          <div className='flex items-center gap-4'>
+            <button className='p-2 rounded-full hover:bg-gray-100 transition-colors'>
+              <Search size={20} className='text-gray-600' strokeWidth={2.5} />
+            </button>
+            <button
+              className='flex items-center gap-2 hover:opacity-80 transition-opacity'
+              onClick={() => goToProfile(mongoUser?._id)}
+            >
+              <img
+                src={user?.imageUrl}
+                alt={user?.username}
+                className='w-9 h-9 rounded-full object-cover ring-2 ring-[#ff7d1a]/30'
+              />
+            </button>
+          </div>
+        </header>
+
+        {/* Mobile navbar */}
+        <header className="sm:hidden flex items-center justify-between w-full min-h-[4rem] border-b border-gray-100 shadow-sm px-4 bg-white z-10 shrink-0">
+          <div className='inline-flex items-center bg-[#ff7d1a] rounded-xl px-3 py-1.5'>
+            <span className="text-white font-black text-lg tracking-tight">Strive</span>
+          </div>
+          <div className='flex gap-2 items-center'>
+            <button className='p-2 rounded-full hover:bg-gray-100 transition-colors'>
+              <Bell size={20} strokeWidth={2.5} className='text-gray-600' />
+            </button>
+            <button onClick={() => goToProfile(mongoUser?._id)}>
+              <img
+                src={user?.imageUrl}
+                alt={user?.username}
+                className='w-9 h-9 rounded-full object-cover ring-2 ring-[#ff7d1a]/30'
+              />
+            </button>
+          </div>
+        </header>
+
+        {/* Page content */}
+        <div className="flex flex-row flex-1 overflow-hidden">
+          <div className="flex-1 overflow-y-auto overflow-x-hidden flex justify-center items-start pt-6 pb-[5rem] sm:pb-6 px-4">
             <Outlet />
           </div>
           <Messages />
         </div>
-        <div>
-
-        </div>
-        <div className='home-bar fixed bottom-0 h-[4rem] bg-[#F9F9FA] border shadow-md  flex justify-center items-center rounded-t-[2rem] w-screen sm:hidden'>
-          <ul className='flex justify-around w-full px-5'>
-            <li onClick={() => { navigate('/'); }} > <Home strokeWidth={3} /> </li>
-            <li onClick={() => { setIsOpen(true); }}> <CirclePlus strokeWidth={3} /> </li>
-            <li onClick={() => goToProfile(mongoUser._id)}> <User strokeWidth={3} /> </li>
-          </ul>
-        </div>
       </div>
 
-
+      {/* Mobile bottom bar */}
+      <nav className='fixed bottom-0 h-[4rem] bg-white border-t border-gray-100 shadow-md flex justify-center items-center rounded-t-2xl w-full sm:hidden z-20'>
+        <ul className='flex justify-around w-full px-8'>
+          <li>
+            <button onClick={() => navigate('/')} className='p-2 rounded-full hover:bg-gray-100 transition-colors'>
+              <Home size={22} strokeWidth={2.5} className='text-gray-600' />
+            </button>
+          </li>
+          <li>
+            <button onClick={() => setIsOpen(true)} className='p-2 rounded-full hover:bg-gray-100 transition-colors'>
+              <CirclePlus size={22} strokeWidth={2.5} className='text-gray-600' />
+            </button>
+          </li>
+          <li>
+            <button onClick={() => goToProfile(mongoUser?._id)} className='p-2 rounded-full hover:bg-gray-100 transition-colors'>
+              <User size={22} strokeWidth={2.5} className='text-gray-600' />
+            </button>
+          </li>
+        </ul>
+      </nav>
     </div>
-  )
-}
+  );
+};
 
-export default MainLayout
+export default MainLayout;

@@ -218,7 +218,7 @@ export const getCommentsByPost = async (req, res) => {
     try {
         const postId = req.params.id;
 
-        const comments = await Comment.find({ post: postId }).populate('path', 'username profilePicture');
+        const comments = await Comment.find({ post: postId }).populate({ path: 'authorId', select: 'username profilePicture' });
 
         if (!comments) return res.status(400).json({ message: "No comments on this post", success: false });
 
@@ -242,11 +242,11 @@ export const deletePost = async (req, res) => {
         if (post.author.toString() !== authorId) return res.status(403).json({ message: "Unauthorized", success: false });
 
         //deleting post -->
-        await post.findByIdAndDelete(postId);
+        await Post.findByIdAndDelete(postId);
 
         //deleting post from user -->
         let user = await User.findById(authorId);
-        user.posts = User.posts.filter(id => id.toString() !== postId);
+        user.posts = user.posts.filter(id => id.toString() !== postId);
         await user.save();
 
         //deleting comments -->
@@ -259,9 +259,9 @@ export const deletePost = async (req, res) => {
     }
 }
 
-export const bookmarkPost = async (res, req) => {
+export const bookmarkPost = async (req, res) => {
     try {
-        const postId = res.params.id;
+        const postId = req.params.id;
         const post = await Post.findById(postId);
         const authorId = req.user;
         const user = await User.findById(authorId);

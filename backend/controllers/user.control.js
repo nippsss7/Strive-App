@@ -140,25 +140,6 @@ export const login = async (req, res) => {
 }
 
 
-export async function ensureUserProfile() {
-    console.log("called ensureUserProfile")
-    const user = await currentUser(); // gets the Clerk user
-    const userId = user.id;
-
-    let profile = await UserProfile.findOne({ userId });
-
-    if (!profile) {
-        profile = await User.create({
-            userId,
-            username: user.username || user.firstName,
-            avatar: user.imageUrl,
-        });
-    }
-
-    return profile;
-}
-
-
 export const logout = async (_, res) => {
     try {
 
@@ -247,7 +228,7 @@ export const editProfile = async (req, res) => {
 
 export const getSuggestedUsers = async (req, res) => {
     try {
-        const suggestedUsers = await User.find({ _id: { $ne: req.id } }).select("-password");
+        const suggestedUsers = await User.find({ _id: { $ne: req.user._id } }).select("-password");
         if (!suggestedUsers) {
             return res.status(400).json({
                 message: "currently do not have any users",
@@ -266,7 +247,7 @@ export const getSuggestedUsers = async (req, res) => {
 
 export const followOrUnfollow = async (req, res) => {
     try {
-        const followKrneWala = req.id;
+        const followKrneWala = req.user._id;
         const jiskoFollowKrunga = req.params.id;
 
         if (followKrneWala === jiskoFollowKrunga) {

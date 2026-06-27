@@ -1,60 +1,93 @@
-import { Dialog, DialogContent, DialogTitle } from './ui/dialog';
-import React from 'react'
-import { DialogHeader } from './ui/dialog'
+import { Dialog, DialogContent } from './ui/dialog';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import store from '@/redux/store';
+import { MessageCircle } from 'lucide-react';
 
-const CommentDialog = ({ open, setOpen, content }) => {
+const CommentDialog = ({ open, setOpen }) => {
+    const { selectedPost } = useSelector(store => store.post);
 
-    const {selectedPost} = useSelector(store => store.post)
-
-    if(!selectedPost){
-        return ;
-    }
+    if (!selectedPost) return null;
 
     return (
-        <div className='h-[90%]'>
-            <Dialog open={open}>
-                <DialogContent className="lg:h-[80%] md:h-[70%] sm:h-[60%] h-[80%] rounded-lg py-[3rem] w-[90%] max-w-[70rem] overflow-hidden flex flex-col justify-center gap-4" onInteractOutside={() => setOpen(false)}>
-                    <h1 className="text-center font-bold text-2xl">All Comments</h1>
-                    <div className="flex gap-4 sm:gap-0 flex-col items-center sm:flex-row sm:items-stretch h-full py-3">
-                        <div className='w-fullq sm:w-1/2 h-[50%] sm:h-auto pr-0 sm:pr-12'>
-                            <img className='rounded-lg object-contain h-full min-w-full' src={selectedPost?.image} alt="" />
-                        </div>
-                        {
-                            content && content.comments.length > 0 ? (
-                                <div className="w-full sm:w-1/2 flex flex-col gap-2 text-gray-500 overflow-scroll overflow-x-hidden">
-                                    {selectedPost?.comments.map((comment, index) => (
-                                        <div key={index} className="border-b py-2">
-                                            <div className="flex items-center gap-2">
-                                                <img
-                                                    src={comment.authorId?.profilePicture}
-                                                    alt="Author"
-                                                    className="w-8 h-8 mr-2 rounded-full"
-                                                />
-                                                <span className="font-semibold text-black">{comment.authorId?.username}</span>
-                                                <p className="text-sm">{comment.text}</p>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
+        <Dialog open={open} onOpenChange={(v) => { if (!v) setOpen(false); }}>
+            <DialogContent
+                className="w-[95vw] max-w-4xl rounded-2xl p-0 overflow-hidden flex flex-col sm:flex-row"
+                style={{ maxHeight: '85vh', minHeight: '60vh' }}
+                onInteractOutside={() => setOpen(false)}
+            >
+                {/* Image side */}
+                <div className='sm:w-1/2 bg-black flex items-center justify-center shrink-0'>
+                    <img
+                        className='w-full h-auto block'
+                        style={{ maxHeight: '85vh', objectFit: 'contain' }}
+                        src={selectedPost.image}
+                        alt="Post"
+                    />
+                </div>
 
-                            ) : (
-                                <div className=' w-full sm:w-1/2 pt-6 flex items-center justify-center text-gray-500'>No Comments to show...</div>
-                            )
-                        }
+                {/* Comments side */}
+                <div className='flex flex-col flex-1 overflow-hidden'>
+                    {/* Author header */}
+                    <div className='flex items-center gap-3 px-5 py-4 border-b border-gray-100 shrink-0'>
+                        <img
+                            src={selectedPost.author?.[0]?.profilePicture}
+                            alt="author"
+                            className='w-9 h-9 rounded-full object-cover'
+                        />
+                        <p className='font-semibold text-sm text-gray-900'>
+                            {selectedPost.author?.[0]?.username || 'User'}
+                        </p>
                     </div>
-                </DialogContent>
-            </Dialog>
-        </div>
 
-    )
-}
+                    {/* Caption */}
+                    {selectedPost.caption && (
+                        <div className='px-5 py-3 border-b border-gray-100 shrink-0'>
+                            <p className='text-sm text-gray-700'>
+                                <span className='font-semibold mr-1'>{selectedPost.author?.[0]?.username}</span>
+                                {selectedPost.caption}
+                            </p>
+                        </div>
+                    )}
+
+                    {/* Comments list */}
+                    <div className='flex-1 overflow-y-auto px-5 py-3 flex flex-col gap-3'>
+                        {selectedPost.comments && selectedPost.comments.length > 0 ? (
+                            selectedPost.comments.map((comment, index) => (
+                                <div key={index} className='flex items-start gap-3'>
+                                    <img
+                                        src={comment.authorId?.profilePicture}
+                                        alt="commenter"
+                                        className='w-8 h-8 rounded-full object-cover shrink-0 mt-0.5'
+                                    />
+                                    <div>
+                                        <p className='text-sm'>
+                                            <span className='font-semibold text-gray-900 mr-1.5'>
+                                                {comment.authorId?.username}
+                                            </span>
+                                            <span className='text-gray-700'>{comment.text}</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <div className='flex flex-col items-center justify-center h-full gap-3 text-gray-400 py-8'>
+                                <MessageCircle size={36} strokeWidth={1.5} />
+                                <p className='text-sm font-medium'>No comments yet</p>
+                                <p className='text-xs'>Be the first to comment</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </DialogContent>
+        </Dialog>
+    );
+};
 
 CommentDialog.propTypes = {
     open: PropTypes.bool.isRequired,
     setOpen: PropTypes.func.isRequired,
 };
 
-export default CommentDialog
+export default CommentDialog;

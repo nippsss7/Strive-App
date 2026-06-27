@@ -12,8 +12,9 @@ const app = express();
 
 
 const allowedOrigins = [
-    "http://localhost:5173",  // Local frontend (development)
-    "https://strive-app-frontend.onrender.com"  // Deployed frontend (production)
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "https://strive-app-frontend.onrender.com"
 ];
 
 
@@ -50,13 +51,6 @@ app.get("/", (req, res) => {
 
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/post", postRoute);
-
-app.get("/", (req, res) => {
-    return res.status(200).json({
-        message: "Backend is working!",
-        success: true
-    });
-});
 
 
 const PORT = process.env.PORT || 3000;

@@ -13,20 +13,14 @@ const Home = () => {
     const { posts } = useSelector(store => store.post)
     const { mongoUser } = useSelector(store => store.auth)
     const { isLoading, error } = useGetAllPosts();
-
-    // if(!user){
-    //     navigate('/login');
-    // }
-
-    useGetAllPosts();
     // useValidate();
 
     if (error) {
         return (
-            <div className='w-full flex p-4 pb-8 flex-col justify-center items-center gap-4' style={{ height: 'calc(100vh - 100px)' }}>
+            <div className='w-full flex flex-col justify-center items-center gap-4 py-20'>
                 <p className="text-red-500">Error loading posts: {error}</p>
-                <button 
-                    onClick={() => window.location.reload()} 
+                <button
+                    onClick={() => window.location.reload()}
                     className="px-4 py-2 bg-[#ff7d1a] text-white rounded-lg hover:bg-[#ff7d1a]/90"
                 >
                     Retry
@@ -37,7 +31,7 @@ const Home = () => {
 
     if (isLoading) {
         return (
-            <div className='w-full flex p-4 pb-8 flex-col justify-center items-center gap-4' style={{ height: 'calc(100vh - 100px)' }}>
+            <div className='w-full flex flex-col justify-center items-center gap-4 py-20'>
                 <Loader2 className="h-8 w-8 animate-spin text-[#ff7d1a]" />
                 <p className="text-gray-500">Loading posts...</p>
             </div>
@@ -46,17 +40,15 @@ const Home = () => {
 
     if (!posts || posts.length === 0) {
         return (
-            <div className='w-full flex p-4 pb-8 flex-col justify-center items-center gap-4' style={{ height: 'calc(100vh - 100px)' }}>
+            <div className='w-full flex flex-col justify-center items-center gap-4 py-20'>
                 <p className="text-gray-500">No posts yet</p>
             </div>
         );
     }
 
     return (
-        <div className='w-full flex p-4 pb-8 flex-col justify-start items-center gap-4 overflow-scroll' style={{ height: 'calc(100vh - 100px)' }}>
-            {
-                posts?.map((post) => <Post post={post} user={mongoUser} />)
-            }
+        <div className='w-full flex flex-col items-center gap-4'>
+            {posts?.map((post) => <Post key={post._id} post={post} user={mongoUser} />)}
         </div>
     )
 }

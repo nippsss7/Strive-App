@@ -3,7 +3,6 @@ import isAuthenticated from '../middlewares/isAuthenticated.js';
 import { editProfile, followOrUnfollow, getProfile, getSuggestedUsers, login, logout, validate } from '../controllers/user.control.js';
 import upload from '../middlewares/multer.js';
 import { clerkAuth } from '../middlewares/clerkAuth.js';
-import { ensureUserProfile } from '../controllers/user.control.js';
 
 const router = express.Router();
 

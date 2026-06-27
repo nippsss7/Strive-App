@@ -1,166 +1,184 @@
-import { CloudFog, CookingPot, Users } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import CommentDialog from './CommentDialog';
-import EditProfile from './EditProfile';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setSelectedPost } from '@/redux/postSlice';
-import { UserButton } from '@clerk/clerk-react';
 import { useClerk } from '@clerk/clerk-react';
-import { useAuth } from '@clerk/clerk-react'
+import { useAuth } from '@clerk/clerk-react';
+import { toast } from 'sonner';
+import { setAuthUser } from '@/redux/authSlice';
+import { Grid3X3, Settings, Loader2 } from 'lucide-react';
 
 const Profile = () => {
   const location = useLocation();
   const clickedId = location.state?.clickedId;
-  console.log('Clicked ID:', clickedId);
-  const [user, setUser] = useState(null); // Better initial state
+  const [user, setUser] = useState(null);
   const [posts, setPosts] = useState(null);
-  const [isCommentOpen, setIsCommentOpen] = useState(false)
-  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false)
-  const [post, setPost] = useState(null)
-  const {isSignedIn, getToken} = useAuth();
-
+  const [isCommentOpen, setIsCommentOpen] = useState(false);
+  const [post, setPost] = useState(null);
+  const { isSignedIn, getToken } = useAuth();
   const { openUserProfile } = useClerk();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { mongoUser } = useSelector(store => store.auth);
 
   const logoutHandler = async (e) => {
+    e?.preventDefault();
     try {
-      e.preventDefault();
       const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/user/logout`, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include', // Include credentials in the request
-      })
-
-      const data = await res.json()
-      console.log(data)
-      console.log(data.success)
-      toast(data.message);
-      console.log(data.status)
-
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+      });
+      const data = await res.json();
       if (data.success) {
-        navigate('/login');
+        toast.success(data.message);
+        navigate('/');
         dispatch(setAuthUser(null));
-        // dispatch(setSelectedPost(null));
-        dispatch(setPosts([]))
       }
-
     } catch (error) {
-      console.log(error)
-      console.log("unable to logout")
+      console.error('Logout failed:', error);
     }
-  }
+  };
 
   useEffect(() => {
+    const idToFetch = clickedId ?? mongoUser?._id;
+    if (!idToFetch) return;
     const fetchUser = async () => {
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/user/${clickedId}/profile`, {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/user/${idToFetch}/profile`, {
           method: 'GET',
-          credentials: 'include'
+          credentials: 'include',
         });
-
         const data = await res.json();
-        if (data.success) {
-          const currentUser = data.user;
-          setUser(currentUser);
-        }
+        if (data.success) setUser(data.user);
       } catch (error) {
-        console.log('Unable to fetch user data');
-        console.log(error);
+        console.error('Unable to fetch user data:', error);
       }
     };
     fetchUser();
-  }, [clickedId]);
+  }, [clickedId, mongoUser?._id]);
 
   useEffect(() => {
     const fetchPosts = async () => {
       const token = await getToken();
       try {
         const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/post/userpost/all`, {
-          method: "GET",
-          headers:{
+          method: 'GET',
+          headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${token}`,
           },
-          credentials: 'include'
-          // body: JSON.stringify(input)
+          credentials: 'include',
         });
-
         const data = await res.json();
-        if (data.success) {
-          const currentPosts = data.posts;
-          console.log(currentPosts)
-          setPosts(currentPosts)
-          console.log(posts);
-        }
-
+        if (data.success) setPosts(data.posts);
       } catch (error) {
-        console.log("unable to fetch posts for profile page!")
-        console.log(error)
+        console.error('Unable to fetch posts:', error);
       }
-    }
+    };
+    fetchPosts();
+  }, []);
 
-    fetchPosts()
-  }, [])
-
-  const editProfile = async () => {
-    console.log("clicked edit profile");
-    setIsEditProfileOpen(true)
-
+  if (!user || !posts) {
+    return (
+      <div className='flex flex-col items-center justify-center w-full py-20 gap-3'>
+        <Loader2 className='animate-spin text-[#ff7d1a]' size={32} />
+        <p className='text-gray-400 text-sm'>Loading profile...</p>
+      </div>
+    );
   }
 
-  // console.log(user);
-
   return (
-    <div className='profilePage h-full w-full'>
-      {user && posts ? ( // Conditional rendering
-        <div className="flex flex-col py-[0rem] sm:py-[5rem] mx-2  max-sm:pb-[7rem]">
-          <div className='info lg:w-5/6 m-auto border-b pb-[1rem] sm:pb-[3rem]'>
-            <div className="flex lg:gap-[5rem] md:gap-[3rem] gap-[2rem] items-center justify-center">
-              <div>
-                <img src={user.profilePicture} className='w-[8rem] h-[7.5rem] sm:w-[12rem] sm:h-[12rem] border rounded-full' alt="profile picture" />
-              </div>
-              <div className='flex flex-col gap-4'>
-                <div className='flex flex-col md:items-center items-start md:flex-row lg:gap-4 md:gap-3'>
-                  <div className='font-bold text-xl sm:w-[100%]'> {user.username} </div>
-                  <div className='flex w-full gap-2 pt-3'>
-                    <button className='bg-gray-200 sm:w-[7rem] max-sm:text-sm h-9 hover:bg-gray-300 p-1 px-2 rounded' onClick={() => { openUserProfile() }}> Edit Profile  </button>
-                    <EditProfile open={isEditProfileOpen} setOpen={setIsEditProfileOpen} />
-                    <button className='bg-gray-200 hover:bg-gray-300 max-sm:text-sm p-1 px-2 rounded' onClick={logoutHandler} > Logout </button>
-                  </div>
-                </div>
-                <div className='flex gap-6'>
-                  <div> {posts.length} posts</div>
-                  <div> {user.followers.length} Followers</div>
-                  <div> {user.following.length} following</div>
-                </div>
-                <div> Your BIO </div>
-              </div>
+    <div className='w-full max-w-[56rem] mx-auto px-4 pb-8'>
+      {/* Profile header */}
+      <div className='flex flex-col sm:flex-row items-center sm:items-start gap-8 py-8 border-b border-gray-100'>
+        {/* Avatar */}
+        <div className='shrink-0'>
+          <img
+            src={user.profilePicture}
+            className='w-24 h-24 sm:w-36 sm:h-36 rounded-full object-cover ring-4 ring-[#ff7d1a]/20 shadow-md'
+            alt="profile picture"
+          />
+        </div>
+
+        {/* Info */}
+        <div className='flex flex-col gap-4 text-center sm:text-left w-full'>
+          <div className='flex flex-col sm:flex-row items-center sm:items-center gap-3'>
+            <h1 className='font-bold text-xl text-gray-900'>{user.username}</h1>
+            <div className='flex gap-2'>
+              <button
+                onClick={() => openUserProfile()}
+                className='px-4 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-semibold rounded-lg transition-colors flex items-center gap-1.5'
+              >
+                <Settings size={14} />
+                Edit Profile
+              </button>
+              <button
+                onClick={logoutHandler}
+                className='px-4 py-1.5 bg-red-50 hover:bg-red-100 text-red-500 text-sm font-semibold rounded-lg transition-colors'
+              >
+                Log out
+              </button>
             </div>
           </div>
-          <div className='posts flex flex-wrap w-full md:w-5/6 m-auto pt-12 gap-4 px-2'>
-            {posts.map(post => (
-              <div
-                key={post.id}
-                className='w-[calc(33.333%-16px)] flex items-center shadow-md rounded-md overflow-hidden border cursor-pointer'>
-                <img
-                  src={post.image}
-                  onClick={() => { setIsCommentOpen(true); setPost(post); dispatch(setSelectedPost(post)) }}
-                  className='w-full h-auto object-cover'
-                  alt="Post Image"
-                />
-              </div>
-            ))}
-            <CommentDialog open={isCommentOpen} setOpen={setIsCommentOpen} content={post} />
+
+          {/* Stats */}
+          <div className='flex justify-center sm:justify-start gap-8'>
+            <div className='text-center'>
+              <p className='font-bold text-lg text-gray-900'>{posts.length}</p>
+              <p className='text-gray-500 text-sm'>posts</p>
+            </div>
+            <div className='text-center'>
+              <p className='font-bold text-lg text-gray-900'>{user.followers.length}</p>
+              <p className='text-gray-500 text-sm'>followers</p>
+            </div>
+            <div className='text-center'>
+              <p className='font-bold text-lg text-gray-900'>{user.following.length}</p>
+              <p className='text-gray-500 text-sm'>following</p>
+            </div>
           </div>
 
+          {user.bio && (
+            <p className='text-gray-700 text-sm max-w-xs'>{user.bio}</p>
+          )}
+        </div>
+      </div>
 
+      {/* Posts grid tab */}
+      <div className='flex border-b border-gray-100 mt-2'>
+        <div className='flex items-center gap-2 px-4 py-3 text-sm font-semibold text-gray-900 border-b-2 border-gray-900'>
+          <Grid3X3 size={16} />
+          Posts
+        </div>
+      </div>
+
+      {/* Posts grid */}
+      {posts.length === 0 ? (
+        <div className='flex flex-col items-center justify-center py-16 gap-3 text-gray-400'>
+          <Grid3X3 size={48} strokeWidth={1} />
+          <p className='font-medium'>No posts yet</p>
         </div>
       ) : (
-        <div>Loading...</div> // Placeholder while data is being fetched
+        <div className='grid grid-cols-3 gap-1 mt-1'>
+          {posts.map(p => (
+            <div
+              key={p._id}
+              className='aspect-square overflow-hidden cursor-pointer group relative bg-gray-100'
+              onClick={() => { setIsCommentOpen(true); setPost(p); dispatch(setSelectedPost(p)); }}
+            >
+              <img
+                src={p.image}
+                className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-300'
+                alt="Post"
+              />
+              <div className='absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200' />
+            </div>
+          ))}
+        </div>
       )}
+
+      <CommentDialog open={isCommentOpen} setOpen={setIsCommentOpen} content={post} />
     </div>
   );
 };
